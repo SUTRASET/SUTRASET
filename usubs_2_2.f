@@ -15,8 +15,7 @@ C                                                                        BCTIME.
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                BCTIME........1400
       DIMENSION IPBC(NBCN),PBC(NBCN),IUBC(NBCN),UBC(NBCN),               BCTIME........1500
      1   QIN(NN),UIN(NN),QUIN(NN),IQSOP(NSOP),IQSOU(NSOU),               BCTIME........1600
-     2   X(NN),Y(NN),Z(NN),
-     3   CJGNUP(NBCN)      ! Chengji 2015-03-31
+     2   X(NN),Y(NN),Z(NN),CJGNUP(NBCN)      ! Chengji 2015-03-31
       DIMENSION PITER(NN)  ! Chengji 2015-03-31 
       INTEGER(1) IBCPBC(NBCN),IBCUBC(NBCN),IBCSOP(NSOP),IBCSOU(NSOU)     BCTIME........1800
       COMMON /DIMS/ NN,NE,NIN,NBI,NCBI,NB,NBHALF,NPBC,NUBC,              BCTIME........1900
@@ -26,6 +25,9 @@ C                                                                        BCTIME.
       COMMON /GRAVEC/ GRAVX,GRAVY,GRAVZ                                  BCTIME........2300
       COMMON /TIMES/ DELT,TSEC,TMIN,THOUR,TDAY,TWEEK,TMONTH,TYEAR,       BCTIME........2400
      1   TMAX,DELTP,DELTU,DLTPM1,DLTUM1,IT,ITBCS,ITRST,ITMAX,TSTART      BCTIME........2500
+      COMMON /CONTRL/ GNUP,GNUU,UP,DTMULT,DTMAX,ME,ISSFLO,ISSTRA,ITCYC, 
+     1   NPCYC,NUCYC,NPRINT,NBCFPR,NBCSPR,NBCPPR,NBCUPR,IREAD,          
+     2   ISTORE,NOUMAT,IUNSAT,KTYPE                                     
 C                                                                        BCTIME........2600
 C.....DEFINITION OF REQUIRED VARIABLES                                   BCTIME........2700
 C . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  BCTIME........2800
@@ -201,10 +203,13 @@ C                                                                        BCTIME.
 
       IF(PITER(IABS(I)).LT.-100.D0.AND.Y(IABS(I)).GT.TIDE) THEN
 C      0.004 M/S *2M *1M * 1000 KG/M3    =[KG/S]
-	    QIN(-I)=-0.004*2.D0*1.D0*1.D3
+	    QIN(-I)=0.D0 
+            UIN(-I)=0.D0
+C            -0.004*2.D0*1.D0*1.D3
       ELSE
             QIN(-I)=0.D0
-      ENDIF
+            UIN(-I)=0.D0
+      END IF
 C     just wish to make one more commit
 C     NOTE: A FLOW AND TRANSPORT SOLUTION MUST OCCUR FOR ANY             BCTIME.......17900
 C           TIME STEP IN WHICH QIN( ) CHANGES.                           BCTIME.......18000
