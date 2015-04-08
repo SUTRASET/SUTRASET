@@ -28,6 +28,7 @@ C                                                                        BCTIME.
       COMMON /CONTRL/ GNUP,GNUU,UP,DTMULT,DTMAX,ME,ISSFLO,ISSTRA,ITCYC, 
      1   NPCYC,NUCYC,NPRINT,NBCFPR,NBCSPR,NBCPPR,NBCUPR,IREAD,          
      2   ISTORE,NOUMAT,IUNSAT,KTYPE                                     
+      DIMENSION KTYPE(2)                                                 
 C                                                                        BCTIME........2600
 C.....DEFINITION OF REQUIRED VARIABLES                                   BCTIME........2700
 C . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  BCTIME........2800
@@ -204,8 +205,7 @@ C                                                                        BCTIME.
       IF(PITER(IABS(I)).LT.-100.D0.AND.Y(IABS(I)).GT.TIDE) THEN
 C      0.004 M/S *2M *1M * 1000 KG/M3    =[KG/S]
 	    QIN(-I)=0.D0 
-            UIN(-I)=0.D0
-C            -0.004*2.D0*1.D0*1.D3
+            UIN(-I)=-0.004*2.D0*1.D0*1.D3
       ELSE
             QIN(-I)=0.D0
             UIN(-I)=0.D0
