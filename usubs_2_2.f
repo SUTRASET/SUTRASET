@@ -204,8 +204,8 @@ C                                                                        BCTIME.
 
       IF(PITER(IABS(I)).LT.-100.D0.AND.Y(IABS(I)).GT.TIDE) THEN
 C      0.004 M/S *2M *1M * 1000 KG/M3    =[KG/S]
-	    QIN(-I)=0.D0 
-            UIN(-I)=-0.004*2.D0*1.D0*1.D3
+	    QIN(-I)=-0.004*2.D0*1.D0*1.D3 
+            UIN(-I)=0.D0
       ELSE
             QIN(-I)=0.D0
             UIN(-I)=0.D0

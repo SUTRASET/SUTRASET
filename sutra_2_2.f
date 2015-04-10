@@ -331,6 +331,7 @@ C        INSERTION.                                                      SUTRA_M
 C                                                                        SUTRA_MAIN...33100
 C                                                                        SUTRA_MAIN...33200
 C.....OUTPUT BANNER                                                      SUTRA_MAIN...33300
+      CALL GVERSION(K3)
       WRITE(K3,110) TRIM(VERNUM)                                         SUTRA_MAIN...33400
   110 FORMAT('1',131('*')////3(132('*')////)////                         SUTRA_MAIN...33500
      1   47X,' SSSS   UU  UU  TTTTTT  RRRRR     AA  '/                   SUTRA_MAIN...33600
