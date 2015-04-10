@@ -13,6 +13,8 @@ C                                                                        BCTIME.
      1   IPBCT,IUBCT,IQSOPT,IQSOUT,X,Y,Z,IBCPBC,IBCUBC,IBCSOP,IBCSOU,
      2   PITER,CJGNUP)     ! Chengji 2015-03-31
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                BCTIME........1400
+C      IMPLICIT NONE FOR BCTIME TO PREVENT TYPO
+C      IMPLICIT NONE
       DIMENSION IPBC(NBCN),PBC(NBCN),IUBC(NBCN),UBC(NBCN),               BCTIME........1500
      1   QIN(NN),UIN(NN),QUIN(NN),IQSOP(NSOP),IQSOU(NSOU),               BCTIME........1600
      2   X(NN),Y(NN),Z(NN),CJGNUP(NBCN)      ! Chengji 2015-03-31
@@ -28,7 +30,9 @@ C                                                                        BCTIME.
       COMMON /CONTRL/ GNUP,GNUU,UP,DTMULT,DTMAX,ME,ISSFLO,ISSTRA,ITCYC, 
      1   NPCYC,NUCYC,NPRINT,NBCFPR,NBCSPR,NBCPPR,NBCUPR,IREAD,          
      2   ISTORE,NOUMAT,IUNSAT,KTYPE                                     
-      DIMENSION KTYPE(2)                                                 
+      DIMENSION KTYPE(2)                                                
+      DOUBLE PRECISION TIDE
+C      DIMENSION TIDE
 C                                                                        BCTIME........2600
 C.....DEFINITION OF REQUIRED VARIABLES                                   BCTIME........2700
 C . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  BCTIME........2800
@@ -123,6 +127,15 @@ C     CONCENTRATIONS (TEMPERATURES) OF INFLOWS AT SPECIFIED              BCTIME.
 C     PRESSURE NODES                                                     BCTIME.......11700
 C                                                                        BCTIME.......11800
    50 CONTINUE                                                           BCTIME.......11900
+      TIDE=4.2D0+1.0D0*SIN(TSEC*3.1415926D0/360.D0/60.D0)       ! Chengji 2015-03-31
+      IF (IT.EQ.1) THEN  
+          OPEN(21,FILE='TIDE.DAT',STATUS='UNKNOWN')   
+C SHOUD IT BE APPENDED?
+          WRITE(21,98)
+   98     FORMAT('  IT',4X,'TIME(DAY)',3X,'TIDAL LEVEL (M)')
+      ENDIF
+      WRITE(21,99) IT, TSEC/3600./24.,TIDE
+   99 FORMAT(I15,(1PE10.2,2X),500(1PE10.3,1X))
       DO 200 IP=1,NPBC                                                   BCTIME.......12000
       I=IPBC(IP)                                                         BCTIME.......12100
       IF(I) 100,200,200                                                  BCTIME.......12200
@@ -132,21 +145,20 @@ C           TIME STEP IN WHICH PBC( ) CHANGES.                           BCTIME.
 C     PBC(IP) =  ((          ))                                          BCTIME.......12600
 C     UBC(IP) =  ((          ))                                          BCTIME.......12700
 C******************************************************************************************
-      TIDE=4.2+1.0*SIN(IT*3.1415926/360)       ! Chengji 2015-03-31
-	  PBC(IP)=9.8*(1000+0.035*713)*(TIDE-Y(IABS(I)))
+      PBC(IP)=9.8D0*(1000.D0+0.035D0*713.D0)*(TIDE-Y(IABS(I)))
       IF(Y(IABS(I)).LE.TIDE) THEN
-		UBC(IP)=0.035
+          UBC(IP)=0.035D0
       ELSE
-	    UBC(IP)=0
+          UBC(IP)=0.D0   
       ENDIF
-	  
+  
       IF(PITER(IABS(I)).GT.0.AND.Y(IABS(I)).GT.TIDE) THEN
-	    PBC(IP)=0
-		CJGNUP(IP)=GNUP
+          PBC(IP)=0.D0
+          CJGNUP(IP)=GNUP
       ENDIF
-	  
+  
       IF(PITER(IABS(I)).LT.0.AND.Y(IABS(I)).GT.TIDE) THEN
-	    CJGNUP(IP)=0
+          CJGNUP(IP)=0.D0
       ENDIF
 C******************************************************************************************	  
 C.....IBCPBC(IP) MUST BE SET TO -1 TO INDICATE THAT PBC(IP)              BCTIME.......12800
@@ -200,11 +212,9 @@ C                                                                        BCTIME.
       I=IQSOP(IQP)                                                       BCTIME.......17600
       IF(I) 500,600,600                                                  BCTIME.......17700
   500 CONTINUE                                                           BCTIME.......17800
-
-
-      IF(PITER(IABS(I)).LT.-100.D0.AND.Y(IABS(I)).GT.TIDE) THEN
-C      0.004 M/S *2M *1M * 1000 KG/M3    =[KG/S]
-	    QIN(-I)=-0.004*2.D0*1.D0*1.D3 
+      IF(PITER(IABS(I)).LT.-1.D+4.AND.Y(IABS(I)).GT.TIDE) THEN
+C      0.004 M/DAY /3600/24  DAY/S *2M *1M * 1000 KG/M3    =[KG/S]
+            QIN(-I)=-0.004/3600.D0/24.D0*2.D0*1.D0*1.D3 
             UIN(-I)=0.D0
       ELSE
             QIN(-I)=0.D0
