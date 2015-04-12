@@ -2858,16 +2858,27 @@ C***FIRST EXECUTABLE STATEMENT  DNRM2                                    SLAP...
          DNRM2  = ZERO                                                   SLAP........285800
          GO TO 300                                                       SLAP........285900
 C                                                                        SLAP........286000
-   10 ASSIGN 30 TO NEXT                                                  SLAP........286100
+CM   10 ASSIGN 30 TO NEXT                                                  SLAP........286100
+10      NEXT=30
       SUM = ZERO                                                         SLAP........286200
       NN = N * INCX                                                      SLAP........286300
 C                                                                        SLAP........286400
 C                                                 BEGIN MAIN LOOP        SLAP........286500
 C                                                                        SLAP........286600
       I = 1                                                              SLAP........286700
-   20    GO TO NEXT,(30, 50, 70, 110)                                    SLAP........286800
+CM   20    GO TO NEXT,(30, 50, 70, 110)                                    SLAP........286800
+20      IF (NEXT.EQ.30) THEN
+      GOTO 30
+      ELSEIF (NEXT.EQ.50) THEN
+      GOTO 50
+      ELSEIF (NEXT.EQ.70) THEN
+      GOTO 70
+      ELSEIF (NEXT.EQ.110) THEN
+      GOTO 110
+      ENDIF
    30 IF (ABS(DX(I)) .GT. CUTLO) GO TO 85                                SLAP........286900
-      ASSIGN 50 TO NEXT                                                  SLAP........287000
+CM      ASSIGN 50 TO NEXT                                                  SLAP........287000
+      NEXT=50
       XMAX = ZERO                                                        SLAP........287100
 C                                                                        SLAP........287200
 C                        PHASE 1.  SUM IS ZERO                           SLAP........287300
@@ -2877,13 +2888,15 @@ C                                                                        SLAP...
 C                                                                        SLAP........287700
 C                                PREPARE FOR PHASE 2.                    SLAP........287800
 C                                                                        SLAP........287900
-      ASSIGN 70 TO NEXT                                                  SLAP........288000
+CM      ASSIGN 70 TO NEXT                                                  SLAP........288000
+      NEXT=70
       GO TO 105                                                          SLAP........288100
 C                                                                        SLAP........288200
 C                                PREPARE FOR PHASE 4.                    SLAP........288300
 C                                                                        SLAP........288400
   100 I = J                                                              SLAP........288500
-      ASSIGN 110 TO NEXT                                                 SLAP........288600
+CM      ASSIGN 110 TO NEXT                                                 SLAP........288600
+      NEXT=110
       SUM = (SUM / DX(I)) / DX(I)                                        SLAP........288700
   105 XMAX = ABS(DX(I))                                                  SLAP........288800
       GO TO 115                                                          SLAP........288900

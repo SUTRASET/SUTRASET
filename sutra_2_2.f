@@ -849,6 +849,8 @@ C.....INPUT DATASET 22 (ELEMENT INCIDENCE [MESH CONNECTION] DATA)        SUTRA_M
 C                                                                        SUTRA_MAIN...84200
 C.....IF USING OLD (VERSION 2D3D.1) OBSERVATION INPUT FORMAT, LOOK UP    SUTRA_MAIN...84300
 C        COORDINATES FOR OBSERVATION POINTS (NODES).                     SUTRA_MAIN...84400
+      CALL INDATET()
+      CALL INDATTIDE()
       IF (NOBCYC.NE.-1) THEN                                             SUTRA_MAIN...84500
          DO 710 K=1,NOBS                                                 SUTRA_MAIN...84600
             I = OBSPTS(K)%L                                              SUTRA_MAIN...84700
@@ -13486,3 +13488,25 @@ C                                                                        ZERO...
 C                                                                        ZERO..........1400
       RETURN                                                             ZERO..........1500
       END                                                                ZERO..........1600
+
+!      SUBROUTINE INDATET ()
+!      USE EXPINT                                                         SUTRA_MAIN...11800
+!       USE M_ET
+!C       IMPLICIT NONE 
+!       IMPLICIT DOUBLE PRECISION (A-H,O-Z)   
+!       INTEGER(1) :: K1
+!       CHARACTER*80 :: ERRCOD
+!       CHARACTER*80, DIMENSION(10):: CHERIN
+!       CHARACTER :: INTFIL*1000 
+!       K1 = 1
+!       OPEN(UNIT=3343,FILE='ET.INP',STATUS='OLD')
+!       
+!       ERRCOD = 'REA-INP-3'
+!C       ERRCOD = 'ET'      
+!       READ(3343,*)INTFIL
+!       WRITE(3343,*) 'asdfsadf'
+!       CALL READIF (3343, 0, INTFIL, ERRCOD) 
+!     
+!       READ(INTFIL,*) QET,UET,PET,UVM,NGT,ITE
+!       RETURN
+!       END SUBROUTINE INDATET 

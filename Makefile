@@ -40,6 +40,7 @@ EXECUTABLE=sutraset_gf
 # 2. no space or anything else after the slash file !!!!!!!!!!!!!!
 # 3. it is ok to use $(GV) in SOURCES
 SOURCES=    fmods_2_2.f \
+	indatet.f90 \
 	ssubs_2_2.f \
 	usubs_2_2.f \
 	$(GV)    \

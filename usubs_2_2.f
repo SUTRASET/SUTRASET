@@ -12,6 +12,9 @@ C                                                                        BCTIME.
       SUBROUTINE BCTIME(IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,      BCTIME........1200
      1   IPBCT,IUBCT,IQSOPT,IQSOUT,X,Y,Z,IBCPBC,IBCUBC,IBCSOP,IBCSOU,
      2   PITER,CJGNUP)     ! Chengji 2015-03-31
+      USE M_PARAMS
+      USE M_ET
+      USE M_TIDE
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                BCTIME........1400
 C      IMPLICIT NONE FOR BCTIME TO PREVENT TYPO
 C      IMPLICIT NONE
@@ -127,10 +130,26 @@ C     CONCENTRATIONS (TEMPERATURES) OF INFLOWS AT SPECIFIED              BCTIME.
 C     PRESSURE NODES                                                     BCTIME.......11700
 C                                                                        BCTIME.......11800
    50 CONTINUE                                                           BCTIME.......11900
-      TIDE=4.2D0+1.0D0*SIN(TSEC*3.1415926D0/360.D0/60.D0)       ! Chengji 2015-03-31
+C TA  --
+C#  DATASET 13B: TIDE FLUCTUATION IN USUBS
+C   TASP   -- SPRING TIDAL AMPLITUDE(M); 
+C   TANE   -- NEAP TIDAL AMPLITUDE (M);
+C   TPSP   -- TIDAL PERIOD OF SPRING TIDE(S); 
+C   TPNP   -- TIDAL PERIOD OF NEAP TIDE(S); 
+C   TM    -- MEAN TIDAL LEVEL[M]; 
+C   RHOST -- THE DENSITY FOR TIDE WATER; 
+C   SC    -- SALINITY OF THE SEAWATER; 
+C   ITT   -- ITERRATION CRITERIA FOR BCTIME SHOULD BE LARGE OR EQUAL THAN 2
+C         [TA]           [TP]           [TM]        [RHOST]        [SC]    [ITT]
+C            0.0       4.32D+4          0.D+0        1025.0D+0    3.57D-02      2
+C      WRITE(*,*) QET,UET,PET,UVM,NGT,ITE
+C      WRITE(*,*) TASP,TANE,TPSP,TPNP,TM,RHOST,SC
+C      TIDE=4.6+1.5*SIN(2*3.1415926*TSC/12/60/60)+0.5*SIN(2*3.1415926*IT*60/12.42/60/60)
+C      TIDE=TM+TASP*SIN(2.D0*PI*IT*60/12/60/60)+TANP*SIN(2*PI*IT*60/12.42/60/60)
+      TIDE=TM+TASP*SIN(2.D0*PI*TSEC/TPSP)+TANP*SIN(2.D0*PI*TSEC/TPNP)
+C      TIDE=4.2D0+1.0D0*SIN(TSEC*3.1415926D0/360.D0/60.D0)       ! Chengji 2015-03-31
       IF (IT.EQ.1) THEN  
           OPEN(21,FILE='TIDE.DAT',STATUS='UNKNOWN')   
-C SHOUD IT BE APPENDED?
           WRITE(21,98)
    98     FORMAT('  IT',4X,'TIME(DAY)',3X,'TIDAL LEVEL (M)')
       ENDIF
@@ -147,7 +166,7 @@ C     UBC(IP) =  ((          ))                                          BCTIME.
 C******************************************************************************************
       PBC(IP)=9.8D0*(1000.D0+0.035D0*713.D0)*(TIDE-Y(IABS(I)))
       IF(Y(IABS(I)).LE.TIDE) THEN
-          UBC(IP)=0.035D0
+          UBC(IP)=SC
       ELSE
           UBC(IP)=0.D0   
       ENDIF
