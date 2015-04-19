@@ -331,7 +331,6 @@ C        INSERTION.                                                      SUTRA_M
 C                                                                        SUTRA_MAIN...33100
 C                                                                        SUTRA_MAIN...33200
 C.....OUTPUT BANNER                                                      SUTRA_MAIN...33300
-      CALL GVERSION(K3)
       WRITE(K3,110) TRIM(VERNUM)                                         SUTRA_MAIN...33400
   110 FORMAT('1',131('*')////3(132('*')////)////                         SUTRA_MAIN...33500
      1   47X,' SSSS   UU  UU  TTTTTT  RRRRR     AA  '/                   SUTRA_MAIN...33600
@@ -790,6 +789,17 @@ C.....ALLOCATE INTEGER ARRAYS, EXCEPT THOSE THAT DEPEND ON BANDWIDTH     SUTRA_M
 C        OR NELT                                                         SUTRA_MAIN...78900
       ALLOCATE(IN(NIN),IQSOP(NSOP),IQSOU(NSOU),IPBC(NBCN),IUBC(NBCN),    SUTRA_MAIN...79000
      1   NREG(NN),LREG(NE),JA(NDIMJA))                                   SUTRA_MAIN...79100
+      ALLOCATE(NDPT(NSOP),NREF(NSOP),HAREA(NSOP),VAREA(NSOP),
+     1   FAREA(NSOP))
+      ALLOCATE(HANN(NN),VANN(NN),FANN(NN))
+      ALLOCATE(WMA(NN),SMA(NN),POR1(NN),REK(NE),TPT(NN),QLY(NE),YY(NN),
+     1   XX(NN),QLX(NE),TPT1(NN),QXF(NE),QYF(NE),SPF(NE),RPF(NE))
+      ALLOCATE(HSS(NN1))
+      ALLOCATE(DFR(NSOP),PWFR(NSOP),PCFR(NSOP))
+C     QVYN FOR VAPOR FLUX, USED IN ENERGY TRANSPORT EQUATION HEAT 
+      ALLOCATE(QVYN(NN1-1))
+C      TPT(1-NN) TEMPERATURE AT EACH CELL/NODE
+C       TPT1(1-NN) TEMPERATURE OF THE LAST TIME STEP AT EACH NODE
       ALLOCATE(IIDPBC(NBCN),IIDUBC(NBCN),IIDSOP(NSOP),IIDSOU(NSOU))      SUTRA_MAIN...79200
 C.....ALLOCATE INTEGER(1) ARRAYS, EXCEPT THOSE THAT DEPEND ON BANDWIDTH  SUTRA_MAIN...79300
 C        OR NELT                                                         SUTRA_MAIN...79400
@@ -850,7 +860,6 @@ C                                                                        SUTRA_M
 C.....IF USING OLD (VERSION 2D3D.1) OBSERVATION INPUT FORMAT, LOOK UP    SUTRA_MAIN...84300
 C        COORDINATES FOR OBSERVATION POINTS (NODES).                     SUTRA_MAIN...84400
       CALL INDATET()
-      CALL INDATTIDE()
       IF (NOBCYC.NE.-1) THEN                                             SUTRA_MAIN...84500
          DO 710 K=1,NOBS                                                 SUTRA_MAIN...84600
             I = OBSPTS(K)%L                                              SUTRA_MAIN...84700
@@ -1078,7 +1087,10 @@ C.....CALL MAIN CONTROL ROUTINE, SUTRA                                   SUTRA_M
      5   PANGL1,PANGL2,PANGL3,PBC,UBC,QPLITR,GXSI,GETA,GZET,FWK,B,       SUTRA_MAIN..106900
      6   GNUP1,GNUU1,IN,IQSOP,IQSOU,IPBC,IUBC,OBSPTS,NREG,LREG,IWK,      SUTRA_MAIN..107000
      7   IA,JA,IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU,  SUTRA_MAIN..107100
-     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA_MAIN..107200
+     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,NDPT,NREF,WMA,SMA
+     9   ,POR1,REK,HAREA,VAREA,FAREA,TPT,QLX,QLY,YY,XX,QVYN,TPT1,HANN,
+     1   VANN,FANN,HSS,QXF,QYF,SPF,RPF)                       
+C     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA_MAIN..107200
 C                                                                        SUTRA_MAIN..107300
 C.....TERMINATION SEQUENCE: DEALLOCATE ARRAYS, CLOSE FILES, AND END      SUTRA_MAIN..107400
 9000  CONTINUE                                                           SUTRA_MAIN..107500
@@ -2744,11 +2756,11 @@ C.....SET ADSORPTION PARAMETERS                                          BUDGET.
       TERM = QUIN(I)                                                     BUDGET.......21300
       QQUPOS = QQUPOS + MAX(0D0, TERM)                                   BUDGET.......21400
       QQUNEG = QQUNEG + MIN(0D0, TERM)                                   BUDGET.......21500
-      IF (QINITR(I).LE.0D0) THEN                                         BUDGET.......21600
-         TERM = QINITR(I)*CW*UVEC(I)                                     BUDGET.......21700
-      ELSE                                                               BUDGET.......21800
+C      IF (QINITR(I).LE.0D0) THEN                                         BUDGET.......21600
+C         TERM = QINITR(I)*CW*UVEC(I)                                     BUDGET.......21700
+C      ELSE                                                               BUDGET.......21800
          TERM = QINITR(I)*CW*UIN(I)                                      BUDGET.......21900
-      END IF                                                             BUDGET.......22000
+C      END IF                                                             BUDGET.......22000
       QIUPOS = QIUPOS + MAX(0D0, TERM)                                   BUDGET.......22100
       QIUNEG = QIUNEG + MIN(0D0, TERM)                                   BUDGET.......22200
  1300 CONTINUE                                                           BUDGET.......22300
@@ -7391,7 +7403,8 @@ C.....CALCULATE SOURCES OF SOLUTE OR ENERGY CONTAINED IN                 NODAL..
 C        SOURCES OF FLUID (ZERO CONTRIBUTION FOR OUTFLOWING FLUID)       NODAL.........9600
       QUR=0.0D0                                                          NODAL.........9700
       QUL=0.0D0                                                          NODAL.........9800
-      IF(QINITR(I)) 360,360,340                                          NODAL.........9900
+C      IF(QINITR(I)) 360,360,340                                          NODAL.........9900
+      IF(QINITR(I)) 340,360,340 
   340 QUL=-CW*QINITR(I)                                                  NODAL........10000
       QUR=-QUL*UIN(I)                                                    NODAL........10100
 C.....ADD CELLWISE TERMS, SOURCES OF SOLUTE OR ENERGY IN FLUID INFLOWS,  NODAL........10200
@@ -12552,7 +12565,10 @@ C                                                                        SUTRA..
      5   PANGL1,PANGL2,PANGL3,PBC,UBC,QPLITR,GXSI,GETA,GZET,FWK,B,       SUTRA.........1300
      6   GNUP1,GNUU1,IN,IQSOP,IQSOU,IPBC,IUBC,OBSPTS,NREG,LREG,IWK,      SUTRA.........1400
      7   IA,JA,IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU,  SUTRA.........1500
-     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA.........1600
+     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,NDPT,NREF,WMA,SMA
+     9   ,POR1,REK,HAREA,VAREA,FAREA,TPT,QLX,QLY,YY,XX,QVYN,TPT1,
+     1   HANN,VANN,FANN,HSS,QXF,QYF,SPF,RPF)   
+C     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA.........1600
       USE ALLARR, ONLY : OBSDAT,CIDBCS                                   SUTRA.........1700
       USE LLDEF                                                          SUTRA.........1800
       USE EXPINT                                                         SUTRA.........1900
@@ -12588,6 +12604,8 @@ C                                                                        SUTRA..
       DIMENSION ALMID(NEX),ATMID(NEX),                                   SUTRA.........4900
      1   VANG2(NEX),PERMXZ(NEX),PERMYZ(NEX),PERMZX(NEX),                 SUTRA.........5000
      2   PERMZY(NEX),PERMZZ(NEX),PANGL2(NEX),PANGL3(NEX)                 SUTRA.........5100
+      DIMENSION SM(NNVEC),SM1(NNVEC),RHVS(NN1)
+      DIMENSION QVYN(NN1-1),YY(NN),XX(NN),HMA(NN1)
       DIMENSION PBC(NBCN),UBC(NBCN),QPLITR(NBCN),GNUP1(NBCN),GNUU1(NBCN) SUTRA.........5200
       DIMENSION GXSI(NE,N48),GETA(NE,N48),GZET(NEX,N48)                  SUTRA.........5300
       DIMENSION FWK(NWF),B(NNNX)                                         SUTRA.........5400
@@ -12595,6 +12613,18 @@ C                                                                        SUTRA..
      1   NREG(NN),LREG(NE),IWK(NWI),IA(NDIMIA),JA(NDIMJA)                SUTRA.........5600
       TYPE (OBSDAT), DIMENSION (NOBSN) :: OBSPTS                         SUTRA.........5700
       DIMENSION KTYPE(2)                                                 SUTRA.........5800
+      DIMENSION IPN(NN),IUN(NN)
+      DIMENSION WMA(NN),SMA(NN),POR1(NN),REK(NE),HAREA(NSOP),VAREA(NSOP)
+     1,FAREA(NSOP),QLX(NE),QLY(NE),QXF(NE),QYF(NE),SPF(NE),RPF(NE)
+      DIMENSION HANN(NN),VANN(NN),FANN(NN),HSS(NN1)
+      DIMENSION QSB(NN), USB(NN), QPB(NPBC), UPB(NPBC)
+      DIMENSION VOL1(NN),TPT(NN),TPT1(NN)
+      INTEGER NDPT(NSOP)
+      INTEGER NREF(NSOP)
+      DIMENSION DFR(NSOP),PWFR(NSOP),PCFR(NSOP)
+      DIMENSION WMAM(NN),DWMADT(NN)
+      DIMENSION ACET(NFY)
+      DIMENSION QVX(MXD,NFY-1),QVY(MXD-1,NFY)
       TYPE (LLD), POINTER :: DENTS                                       SUTRA.........5900
       TYPE (LLD), ALLOCATABLE :: DENOB(:)                                SUTRA.........6000
       DIMENSION LCNT(NFLOMX)                                             SUTRA.........6100
@@ -13008,6 +13038,10 @@ C..... 2D PROBLEM                                                        SUTRA..
      3   VMAG,VANG1,VOL,PMAT,PVEC,UMAT,UVEC,GXSI,GETA,PVEL,LREG,IA,JA)   SUTRA........46100
        END IF                                                            SUTRA........46200
       END IF                                                             SUTRA........46300
+C    IQSOPT=-1 WHEN SOURCE AND SINK ARE DETERMINED BY BCTIME()
+      IF (IT.EQ.1.AND.ITER.EQ.1.AND.IQSOPT.EQ.-1) CALL 
+     1 SINKAREA(X,Y,Z,
+     1HAREA,VAREA,FAREA,IQSOP,NDPT,NREF,YY, XX,VOL,HANN,VANN,FANN)
 C                                                                        SUTRA........46400
 C.....DO NODEWISE CALCULATIONS IN MATRIX EQUATION FOR P AND/OR U         SUTRA........46500
       CALL NODAL(ML,VOL,PMAT,PVEC,UMAT,UVEC,PITER,UITER,PM1,UM1,UM2,     SUTRA........46600

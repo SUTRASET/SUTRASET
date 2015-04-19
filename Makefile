@@ -41,13 +41,20 @@ EXECUTABLE=sutraset_gf
 # 3. it is ok to use $(GV) in SOURCES
 SOURCES=    fmods_2_2.f \
 	indatet.f90 \
+	unsat.f \
 	ssubs_2_2.f \
 	usubs_2_2.f \
+	ft03.f90\
+	SinkareaRegular.f\
+	Others.f\
+	surfrsis.f90\
 	$(GV)    \
 	sutra_2_2.f 
 ## object file from source.f90 (.f90 -> .o)               
-OBJECTS=$(SOURCES:.f=.o)
+OBJECTS_1=$(SOURCES:.f90=.o)
+OBJECTS=$(OBJECTS_1:.f=.o)
 
+OBJECTS=$(SOURCES:.f=.o)
 ## Libraries
 #LIBS = -L/usr/lib -llapack -lblas
 #LIBS = -L/usr/lib -llapack.so.3 -lblas.so.3
