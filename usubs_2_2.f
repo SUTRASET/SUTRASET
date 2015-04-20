@@ -11,7 +11,7 @@ C ***   (4) TIME-DEPENDENT ENERGY OR SOLUTE MASS SOURCES                 BCTIME.
 C                                                                        BCTIME........1100
       SUBROUTINE BCTIME(IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,      BCTIME........1200
      1   IPBCT,IUBCT,IQSOPT,IQSOUT,X,Y,Z,IBCPBC,IBCUBC,IBCSOP,IBCSOU,
-     2   PITER,CJGNUP)     ! Chengji 2015-03-31
+     2   PITER,UITER,CJGNUP,RCIT,SW,POR,NREG,YY)     ! Chengji 2015-03-31
       USE M_PARAMS
       USE M_ET
       USE M_TIDE
@@ -25,6 +25,8 @@ C      IMPLICIT NONE
      1   QIN(NN),UIN(NN),QUIN(NN),IQSOP(NSOP),IQSOU(NSOU),               BCTIME........1600
      2   X(NN),Y(NN),Z(NN),CJGNUP(NBCN)      ! Chengji 2015-03-31
       DIMENSION PITER(NN)  ! Chengji 2015-03-31 
+      DIMENSION NREG(NN),YY(NN)
+      DIMENSION SW(NN),POR(NN),RCIT(NN),UITER(NN)
       INTEGER(1) IBCPBC(NBCN),IBCUBC(NBCN),IBCSOP(NSOP),IBCSOU(NSOU)     BCTIME........1800
       COMMON /DIMS/ NN,NE,NIN,NBI,NCBI,NB,NBHALF,NPBC,NUBC,              BCTIME........1900
      1   NSOP,NSOU,NBCN,NCIDB                                            BCTIME........2000
@@ -236,7 +238,7 @@ C                                                                        BCTIME.
   500 CONTINUE                                                           BCTIME.......17800
       IF(PITER(IABS(I)).LT.PET.AND.Y(IABS(I)).GT.TIDE) THEN
       CALL EVAPORATION (AET,PITER(IABS(I)),UITER(IABS(I))
-     1,RCIT(IABS(I)),
+     1,RCIT(IABS(I))
      2,RSC,298.D0,POR(IABS(I)),SW(IABS(I))
      3,NREG(IABS(I)),YY(IABS(I)))
 !          SURF=SURFRSIS(PC,POR,SW,MSR,KREG,TSK,YY)

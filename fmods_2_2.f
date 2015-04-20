@@ -26,6 +26,8 @@ C                                                                        ALLARR.
      1   GXSI, GETA, GZET                                                ALLARR........2600
       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE ::                     ALLARR........2700
      1   FWK ,B                                                          ALLARR........2800
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE ::
+     1   SM,WMA,SMA,YY
       INTEGER, DIMENSION(:), ALLOCATABLE ::                              ALLARR........2900
      1   IN, IQSOP, IQSOU, IPBC, IUBC,                                   ALLARR........3000
      2   NREG, LREG, IWK, IA, JA                                         ALLARR........3100

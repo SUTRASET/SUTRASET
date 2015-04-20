@@ -1,0 +1,7 @@
+#!/bin/bash
+ifort -O3 \
+      fmods_2_2.f \
+      ssubs_2_2.f \
+      sutra_2_2.f \
+      usubs_2_2.f \
+      -o sutra_if

@@ -789,17 +789,7 @@ C.....ALLOCATE INTEGER ARRAYS, EXCEPT THOSE THAT DEPEND ON BANDWIDTH     SUTRA_M
 C        OR NELT                                                         SUTRA_MAIN...78900
       ALLOCATE(IN(NIN),IQSOP(NSOP),IQSOU(NSOU),IPBC(NBCN),IUBC(NBCN),    SUTRA_MAIN...79000
      1   NREG(NN),LREG(NE),JA(NDIMJA))                                   SUTRA_MAIN...79100
-      ALLOCATE(NDPT(NSOP),NREF(NSOP),HAREA(NSOP),VAREA(NSOP),
-     1   FAREA(NSOP))
-      ALLOCATE(HANN(NN),VANN(NN),FANN(NN))
-      ALLOCATE(WMA(NN),SMA(NN),POR1(NN),REK(NE),TPT(NN),QLY(NE),YY(NN),
-     1   XX(NN),QLX(NE),TPT1(NN),QXF(NE),QYF(NE),SPF(NE),RPF(NE))
-      ALLOCATE(HSS(NN1))
-      ALLOCATE(DFR(NSOP),PWFR(NSOP),PCFR(NSOP))
-C     QVYN FOR VAPOR FLUX, USED IN ENERGY TRANSPORT EQUATION HEAT 
-      ALLOCATE(QVYN(NN1-1))
-C      TPT(1-NN) TEMPERATURE AT EACH CELL/NODE
-C       TPT1(1-NN) TEMPERATURE OF THE LAST TIME STEP AT EACH NODE
+      ALLOCATE(WMA(NN),SMA(NN))
       ALLOCATE(IIDPBC(NBCN),IIDUBC(NBCN),IIDSOP(NSOP),IIDSOU(NSOU))      SUTRA_MAIN...79200
 C.....ALLOCATE INTEGER(1) ARRAYS, EXCEPT THOSE THAT DEPEND ON BANDWIDTH  SUTRA_MAIN...79300
 C        OR NELT                                                         SUTRA_MAIN...79400
@@ -1087,9 +1077,7 @@ C.....CALL MAIN CONTROL ROUTINE, SUTRA                                   SUTRA_M
      5   PANGL1,PANGL2,PANGL3,PBC,UBC,QPLITR,GXSI,GETA,GZET,FWK,B,       SUTRA_MAIN..106900
      6   GNUP1,GNUU1,IN,IQSOP,IQSOU,IPBC,IUBC,OBSPTS,NREG,LREG,IWK,      SUTRA_MAIN..107000
      7   IA,JA,IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU,  SUTRA_MAIN..107100
-     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,NDPT,NREF,WMA,SMA
-     9   ,POR1,REK,HAREA,VAREA,FAREA,TPT,QLX,QLY,YY,XX,QVYN,TPT1,HANN,
-     1   VANN,FANN,HSS,QXF,QYF,SPF,RPF)                       
+     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,WMA,SMA,YY)
 C     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA_MAIN..107200
 C                                                                        SUTRA_MAIN..107300
 C.....TERMINATION SEQUENCE: DEALLOCATE ARRAYS, CLOSE FILES, AND END      SUTRA_MAIN..107400
@@ -11068,8 +11056,10 @@ C.....INPUT DATASET 17:  DATA FOR FLUID SOURCES AND SINKS                SOURCE.
             UINC = 0D0                                                   SOURCE........8000
          END IF                                                          SOURCE........8100
       ELSE                                                               SOURCE........8200
-         QINC = 0D0                                                      SOURCE........8300
-         UINC = 0D0                                                      SOURCE........8400
+C     READ QINC AND UINC WHEN (IQCP
+      READ(INTFIL,*,IOSTAT=INERR(1)) IQCP,QINC,UINC
+C         QINC = 0D0                                                      SOURCE........8300
+C         UINC = 0D0                                                      SOURCE........8400
       END IF                                                             SOURCE........8500
       IQSOP(NIQP)=IQCP                                                   SOURCE........8600
       IF(IQCP.LT.0) IQSOPT=-1                                            SOURCE........8700
@@ -11079,7 +11069,8 @@ C.....INPUT DATASET 17:  DATA FOR FLUID SOURCES AND SINKS                SOURCE.
       IF(IQCP.GT.0) GOTO 450                                             SOURCE........9100
       WRITE(K3,500) IQCP                                                 SOURCE........9200
       GOTO 600                                                           SOURCE........9300
-  450 IF(QINC.GT.0) GOTO 460                                             SOURCE........9400
+450   GOTO 460
+C  450 IF(QINC.GT.0) GOTO 460                                             SOURCE........9400
       WRITE(K3,500) IQCP,QINC                                            SOURCE........9500
       GOTO 600                                                           SOURCE........9600
   460 WRITE(K3,500) IQCP,QINC,UINC                                       SOURCE........9700
@@ -12565,9 +12556,7 @@ C                                                                        SUTRA..
      5   PANGL1,PANGL2,PANGL3,PBC,UBC,QPLITR,GXSI,GETA,GZET,FWK,B,       SUTRA.........1300
      6   GNUP1,GNUU1,IN,IQSOP,IQSOU,IPBC,IUBC,OBSPTS,NREG,LREG,IWK,      SUTRA.........1400
      7   IA,JA,IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU,  SUTRA.........1500
-     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,NDPT,NREF,WMA,SMA
-     9   ,POR1,REK,HAREA,VAREA,FAREA,TPT,QLX,QLY,YY,XX,QVYN,TPT1,
-     1   HANN,VANN,FANN,HSS,QXF,QYF,SPF,RPF)   
+     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,WMA,SMA,YY)
 C     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA.........1600
       USE ALLARR, ONLY : OBSDAT,CIDBCS                                   SUTRA.........1700
       USE LLDEF                                                          SUTRA.........1800
@@ -12613,18 +12602,7 @@ C     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA.
      1   NREG(NN),LREG(NE),IWK(NWI),IA(NDIMIA),JA(NDIMJA)                SUTRA.........5600
       TYPE (OBSDAT), DIMENSION (NOBSN) :: OBSPTS                         SUTRA.........5700
       DIMENSION KTYPE(2)                                                 SUTRA.........5800
-      DIMENSION IPN(NN),IUN(NN)
-      DIMENSION WMA(NN),SMA(NN),POR1(NN),REK(NE),HAREA(NSOP),VAREA(NSOP)
-     1,FAREA(NSOP),QLX(NE),QLY(NE),QXF(NE),QYF(NE),SPF(NE),RPF(NE)
-      DIMENSION HANN(NN),VANN(NN),FANN(NN),HSS(NN1)
-      DIMENSION QSB(NN), USB(NN), QPB(NPBC), UPB(NPBC)
-      DIMENSION VOL1(NN),TPT(NN),TPT1(NN)
-      INTEGER NDPT(NSOP)
-      INTEGER NREF(NSOP)
-      DIMENSION DFR(NSOP),PWFR(NSOP),PCFR(NSOP)
-      DIMENSION WMAM(NN),DWMADT(NN)
-      DIMENSION ACET(NFY)
-      DIMENSION QVX(MXD,NFY-1),QVY(MXD-1,NFY)
+      DIMENSION WMA(NN),SMA(NN)
       TYPE (LLD), POINTER :: DENTS                                       SUTRA.........5900
       TYPE (LLD), ALLOCATABLE :: DENOB(:)                                SUTRA.........6000
       DIMENSION LCNT(NFLOMX)                                             SUTRA.........6100
@@ -13011,7 +12989,8 @@ C        FOR THIS TIME STEP                                              SUTRA..
       IF (ITER.EQ.1.AND.IBCT.NE.4)                                       SUTRA........43500
      1   CALL BCTIME(IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,         SUTRA........43600
      2   IPBCT,IUBCT,IQSOPT,IQSOUT,X,Y,Z,IBCPBC,IBCUBC,IBCSOP,IBCSOU,
-     3   PITER,CJGNUP)  ! Chengji 2015-03-31
+     3   PITER,UITER,CJGNUP,RCIT,SW,POR,NREG,YY)
+C     3   PITER,CJGNUP)  ! Chengji 2015-03-31
       IF ((ITER.EQ.1).AND.(K9.NE.-1))                                    SUTRA........43800
      1   CALL BCSTEP(SETBCS,IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,  SUTRA........43900
      2   IPBCT1,IUBCT1,IQSOPT1,IQSOUT1,GNUP1,GNUU1,                      SUTRA........44000

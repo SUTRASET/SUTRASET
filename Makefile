@@ -26,10 +26,10 @@ COMPILER=gfortran
 #OPTIONS= -fbacktrace 
 #OPTIONS= -ffpe-trap=zero
 OPTIONS= -O3  # -g -traceback -check bounds
-
+OPTIONDB=-ggdb
 ## executable file
 EXECUTABLE=sutraset_gf
-
+DEBUGEXE  =sutra_debug_gf
 ## Sources files
 #SOURCES=subroutine1.f90           \
 #        subroutine2.f90           \
@@ -46,7 +46,8 @@ SOURCES=    fmods_2_2.f \
 	usubs_2_2.f \
 	ft03.f90\
 	SinkareaRegular.f\
-	Others.f\
+	others.f\
+	evaporation.f90\
 	surfrsis.f90\
 	$(GV)    \
 	sutra_2_2.f 
@@ -54,7 +55,7 @@ SOURCES=    fmods_2_2.f \
 OBJECTS_1=$(SOURCES:.f90=.o)
 OBJECTS=$(OBJECTS_1:.f=.o)
 
-OBJECTS=$(SOURCES:.f=.o)
+#OBJECTS=$(SOURCES:.f=.o)
 ## Libraries
 #LIBS = -L/usr/lib -llapack -lblas
 #LIBS = -L/usr/lib -llapack.so.3 -lblas.so.3
@@ -71,7 +72,7 @@ do_script:
 	@echo "  WRITE (K3,*) \" GIT VERSION: `git show-ref refs/heads/master | cut -d " " -f 1 `\" ">> $(GV)
 	@echo '      RETURN '  >>$(GV)
 	@echo 'END SUBROUTINE' >>$(GV)
-
+#	@echo $(OBJECTS) >aaa.txt 
 
 #target: prerequisites 
 
@@ -84,15 +85,36 @@ all: $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS)
 	$(COMPILER) $(OPTIONS) $^ -o $@ $(LIBS)
 ## 2) compiling separated objects
+# '%.f' is all files in '$(OBJECTS)' with exetension name as f 
+# '%.o'?????????????????
 %.o: %.f
 	$(COMPILER) -c $(OPTIONS) $^ 
+%.o: %.f90
+	$(COMPILER) -c $(OPTIONS) $^ 
+# question: why it seems that the program first executes process 
+#    2) --i.e., make objects then process 1) --i.e., create 
+#    binary files?
+
 
 prerequisites: do_script
 ## clean files
 clean:
-	@rm -f *.o *.mod *~ $(EXECUTABLE)
+	@rm -f *.o *.mod *~ $(EXECUTABLE) $(DEBUGEXE)
 	@rm $(GV)
 	@echo " "
 	@echo "cleaning OK."
 	@echo "-------------"
-
+# debug files
+# 'debug: $(DEBUGEXE)' 
+# 'debug'      -- the name that this subroutine will be called 
+#                 for example 'make debug'
+# '$(DEBUGEXE)'-- the binary file created after this subroutine 
+#
+debug: $(DEBUGEXE)
+# '${DEBUGEXE}:${SOURCES}'
+# '${DEBUGEXE}'  -- the binary that is going to be created. it 
+#                 is referred to as '$@' in the following line
+# '${SOURCES}'   -- the source file that is going to be used
+#                 it is referred to as '$^' in the following line
+${DEBUGEXE}: ${SOURCES}
+	$(COMPILER) $(OPTIONDB) $^ -o $@
