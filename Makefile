@@ -91,6 +91,7 @@ $(EXECUTABLE): $(OBJECTS)
 	$(COMPILER) -c $(OPTIONS) $^ 
 %.o: %.f90
 	$(COMPILER) -c $(OPTIONS) $^ 
+#	@echo %.o >b.txt
 # question: why it seems that the program first executes process 
 #    2) --i.e., make objects then process 1) --i.e., create 
 #    binary files?

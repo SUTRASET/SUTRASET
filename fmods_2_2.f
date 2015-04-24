@@ -27,7 +27,9 @@ C                                                                        ALLARR.
       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE ::                     ALLARR........2700
      1   FWK ,B                                                          ALLARR........2800
       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE ::
-     1   SM,WMA,SMA,YY
+     1   SM,WMA,SMA,YY,SAREA
+C     YY -- THE EFFECTIVE Y DISTANCE
+C   SAREA-- THE SURFACE AREA OF DATASET 17 NODES
       INTEGER, DIMENSION(:), ALLOCATABLE ::                              ALLARR........2900
      1   IN, IQSOP, IQSOU, IPBC, IUBC,                                   ALLARR........3000
      2   NREG, LREG, IWK, IA, JA                                         ALLARR........3100
@@ -330,3 +332,8 @@ C                                                                        FINDEF.
         SAVE
       END MODULE M_AEROR
       
+      MODULE M_SALTR
+        IMPLICIT NONE
+        DOUBLE PRECISION :: AR,BR
+        SAVE
+      END MODULE M_SALTR

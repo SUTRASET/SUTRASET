@@ -120,6 +120,7 @@ C                                                                        SUTRA_M
       USE BCSDEF                                                         SUTRA_MAIN...12000
       USE FINDEF                                                         SUTRA_MAIN...12100
       USE LLDEF                                                          SUTRA_MAIN...12200
+      USE M_ET
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                SUTRA_MAIN...12300
       PARAMETER (NCOLMX=9)                                               SUTRA_MAIN...12400
 C                                                                        SUTRA_MAIN...12500
@@ -791,6 +792,7 @@ C        OR NELT                                                         SUTRA_M
      1   NREG(NN),LREG(NE),JA(NDIMJA))                                   SUTRA_MAIN...79100
       ALLOCATE(WMA(NN),SMA(NN))
       ALLOCATE(IIDPBC(NBCN),IIDUBC(NBCN),IIDSOP(NSOP),IIDSOU(NSOU))      SUTRA_MAIN...79200
+      ALLOCATE(SAREA(NSOP),YY(NSOP))
 C.....ALLOCATE INTEGER(1) ARRAYS, EXCEPT THOSE THAT DEPEND ON BANDWIDTH  SUTRA_MAIN...79300
 C        OR NELT                                                         SUTRA_MAIN...79400
       ALLOCATE(IBCPBC(NBCN),IBCUBC(NBCN),IBCSOP(NSOP),IBCSOU(NSOU))      SUTRA_MAIN...79500
@@ -838,7 +840,8 @@ C        SOLUTE MASS)                                                    SUTRA_M
       CALL ZERO(QUIN,NN,0.0D0)                                           SUTRA_MAIN...83100
       IF(NSOP-1.GT.0.OR.NSOU-1.GT.0)                                     SUTRA_MAIN...83200
      1   CALL SOURCE(QIN,UIN,IQSOP,QUIN,IQSOU,IQSOPT,IQSOUT,             SUTRA_MAIN...83300
-     2      IBCSOP,IBCSOU)                                               SUTRA_MAIN...83400
+     2      IBCSOP,IBCSOU,SAREA,YY)
+C     2      IBCSOP,IBCSOU)                                               SUTRA_MAIN...83400
 C                                                                        SUTRA_MAIN...83500
 C.....INPUT DATASETS 19 & 20 (SPECIFIED P AND U BOUNDARY CONDITIONS)     SUTRA_MAIN...83600
       IF(NBCN-1.GT.0) CALL BOUND(IPBC,PBC,IUBC,UBC,IPBCT,IUBCT,          SUTRA_MAIN...83700
@@ -850,6 +853,8 @@ C                                                                        SUTRA_M
 C.....IF USING OLD (VERSION 2D3D.1) OBSERVATION INPUT FORMAT, LOOK UP    SUTRA_MAIN...84300
 C        COORDINATES FOR OBSERVATION POINTS (NODES).                     SUTRA_MAIN...84400
       CALL INDATET()
+      IF (UVM.NE.0.) ALLOCATE(SM(NN))
+      CALL ZERO(SM,NNVEC,0.0D0)
       IF (NOBCYC.NE.-1) THEN                                             SUTRA_MAIN...84500
          DO 710 K=1,NOBS                                                 SUTRA_MAIN...84600
             I = OBSPTS(K)%L                                              SUTRA_MAIN...84700
@@ -1077,7 +1082,7 @@ C.....CALL MAIN CONTROL ROUTINE, SUTRA                                   SUTRA_M
      5   PANGL1,PANGL2,PANGL3,PBC,UBC,QPLITR,GXSI,GETA,GZET,FWK,B,       SUTRA_MAIN..106900
      6   GNUP1,GNUU1,IN,IQSOP,IQSOU,IPBC,IUBC,OBSPTS,NREG,LREG,IWK,      SUTRA_MAIN..107000
      7   IA,JA,IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU,  SUTRA_MAIN..107100
-     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,WMA,SMA,YY)
+     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,WMA,SMA,YY,SAREA)
 C     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA_MAIN..107200
 C                                                                        SUTRA_MAIN..107300
 C.....TERMINATION SEQUENCE: DEALLOCATE ARRAYS, CLOSE FILES, AND END      SUTRA_MAIN..107400
@@ -10983,7 +10988,8 @@ C ***  TO READ AND ORGANIZE DEFAULT VALUES FOR FLUID MASS SOURCE DATA    SOURCE.
 C ***  AND ENERGY OR SOLUTE MASS SOURCE DATA.                            SOURCE.........500
 C                                                                        SOURCE.........600
       SUBROUTINE SOURCE(QIN,UIN,IQSOP,QUIN,IQSOU,IQSOPT,IQSOUT,          SOURCE.........700
-     1   IBCSOP,IBCSOU)                                                  SOURCE.........800
+     1   IBCSOP,IBCSOU,SAREA,YY)
+C     1   IBCSOP,IBCSOU)                                                  SOURCE.........800
       USE EXPINT                                                         SOURCE.........900
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                SOURCE........1000
       CHARACTER INTFIL*1000                                              SOURCE........1100
@@ -10999,6 +11005,7 @@ C                                                                        SOURCE.
       COMMON /FUNITS/ K00,K0,K1,K2,K3,K4,K5,K6,K7,K8,K9,                 SOURCE........2100
      1   K10,K11,K12,K13                                                 SOURCE........2200
       DIMENSION QIN(NN),UIN(NN),IQSOP(NSOP),QUIN(NN),IQSOU(NSOU)         SOURCE........2300
+      DIMENSION SAREA(NSOP),YY(NSOP)
       DIMENSION INERR(10),RLERR(10)                                      SOURCE........2400
 C                                                                        SOURCE........2500
 C.....NSOPI IS ACTUAL NUMBER OF FLUID SOURCE NODES.                      SOURCE........2600
@@ -11056,8 +11063,8 @@ C.....INPUT DATASET 17:  DATA FOR FLUID SOURCES AND SINKS                SOURCE.
             UINC = 0D0                                                   SOURCE........8000
          END IF                                                          SOURCE........8100
       ELSE                                                               SOURCE........8200
-C     READ QINC AND UINC WHEN (IQCP
-      READ(INTFIL,*,IOSTAT=INERR(1)) IQCP,QINC,UINC
+C     READ QINC AND UINC WHEN (IQCP<0)
+      READ(INTFIL,*,IOSTAT=INERR(1)) IQCP,SAREA(NIQP),YY(NIQP)
 C         QINC = 0D0                                                      SOURCE........8300
 C         UINC = 0D0                                                      SOURCE........8400
       END IF                                                             SOURCE........8500
@@ -12556,7 +12563,7 @@ C                                                                        SUTRA..
      5   PANGL1,PANGL2,PANGL3,PBC,UBC,QPLITR,GXSI,GETA,GZET,FWK,B,       SUTRA.........1300
      6   GNUP1,GNUU1,IN,IQSOP,IQSOU,IPBC,IUBC,OBSPTS,NREG,LREG,IWK,      SUTRA.........1400
      7   IA,JA,IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU,  SUTRA.........1500
-     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,WMA,SMA,YY)
+     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,WMA,SMA,YY,SAREA)
 C     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA.........1600
       USE ALLARR, ONLY : OBSDAT,CIDBCS                                   SUTRA.........1700
       USE LLDEF                                                          SUTRA.........1800
@@ -12577,6 +12584,7 @@ C     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA.
       LOGICAL ONCEK10,ONCEK11,ONCEK12,ONCEK13                            SUTRA.........3300
       LOGICAL ONCEP                                                      SUTRA.........3400
       LOGICAL ONCEBCS, SETBCS, BCSFL(0:ITMAX), BCSTR(0:ITMAX)            SUTRA.........3500
+      LOGICAL NWS
       INTEGER(1) IBCPBC(NBCN),IBCUBC(NBCN),IBCSOP(NSOP),IBCSOU(NSOU)     SUTRA.........3600
       INTEGER IIDPBC(NBCN),IIDUBC(NBCN),IIDSOP(NSOP),IIDSOU(NSOU)        SUTRA.........3700
       DIMENSION INERR(10),RLERR(10)                                      SUTRA.........3800
@@ -12593,8 +12601,11 @@ C     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA.
       DIMENSION ALMID(NEX),ATMID(NEX),                                   SUTRA.........4900
      1   VANG2(NEX),PERMXZ(NEX),PERMYZ(NEX),PERMZX(NEX),                 SUTRA.........5000
      2   PERMZY(NEX),PERMZZ(NEX),PANGL2(NEX),PANGL3(NEX)                 SUTRA.........5100
-      DIMENSION SM(NNVEC),SM1(NNVEC),RHVS(NN1)
-      DIMENSION QVYN(NN1-1),YY(NN),XX(NN),HMA(NN1)
+      DIMENSION SM(NN)
+      DIMENSION YY(NSOP),SAREA(NSOP)
+C     REQUIRED BY WSMASS
+      DIMENSION QSB(NN),USB(NN),QPB(NPBC),UPB(NPBC),WMAM(NN)
+C     --END WSMASS--
       DIMENSION PBC(NBCN),UBC(NBCN),QPLITR(NBCN),GNUP1(NBCN),GNUU1(NBCN) SUTRA.........5200
       DIMENSION GXSI(NE,N48),GETA(NE,N48),GZET(NEX,N48)                  SUTRA.........5300
       DIMENSION FWK(NWF),B(NNNX)                                         SUTRA.........5400
@@ -12635,11 +12646,11 @@ C     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA.
       COMMON /TIMES/ DELT,TSEC,TMIN,THOUR,TDAY,TWEEK,TMONTH,TYEAR,       SUTRA.........8700
      1   TMAX,DELTP,DELTU,DLTPM1,DLTUM1,IT,ITBCS,ITRST,ITMAX,TSTART      SUTRA.........8800
       COMMON /VER/ VERNUM, VERNIN                                        SUTRA.........8900
-	  
+  
       DO 1980 IP=1,NBCN  ! Chengji 2015-03-31
-	    CJGNUP(IP)=GNUP
+        CJGNUP(IP)=GNUP
  1980 CONTINUE
-	  
+  
 C                                                                        SUTRA.........9000
 C.....INITIALIZE FLAG TO INDICATE THAT BCSTEP HAS NOT YET BEEN CALLED    SUTRA.........9100
 C        IN THIS SUBROUTINE                                              SUTRA.........9200
@@ -12989,7 +13000,7 @@ C        FOR THIS TIME STEP                                              SUTRA..
       IF (ITER.EQ.1.AND.IBCT.NE.4)                                       SUTRA........43500
      1   CALL BCTIME(IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,         SUTRA........43600
      2   IPBCT,IUBCT,IQSOPT,IQSOUT,X,Y,Z,IBCPBC,IBCUBC,IBCSOP,IBCSOU,
-     3   PITER,UITER,CJGNUP,RCIT,SW,POR,NREG,YY)
+     3   PITER,UITER,CJGNUP,RCIT,SW,POR,NREG,YY,SAREA,SM)
 C     3   PITER,CJGNUP)  ! Chengji 2015-03-31
       IF ((ITER.EQ.1).AND.(K9.NE.-1))                                    SUTRA........43800
      1   CALL BCSTEP(SETBCS,IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,  SUTRA........43900
@@ -13018,9 +13029,9 @@ C..... 2D PROBLEM                                                        SUTRA..
        END IF                                                            SUTRA........46200
       END IF                                                             SUTRA........46300
 C    IQSOPT=-1 WHEN SOURCE AND SINK ARE DETERMINED BY BCTIME()
-      IF (IT.EQ.1.AND.ITER.EQ.1.AND.IQSOPT.EQ.-1) CALL 
-     1 SINKAREA(X,Y,Z,
-     1HAREA,VAREA,FAREA,IQSOP,NDPT,NREF,YY, XX,VOL,HANN,VANN,FANN)
+C      IF (IT.EQ.1.AND.ITER.EQ.1.AND.IQSOPT.EQ.-1) CALL 
+C     1 SINKAREA(X,Y,Z,
+C     1HAREA,VAREA,FAREA,IQSOP,NDPT,NREF,YY, XX,VOL,HANN,VANN,FANN)
 C                                                                        SUTRA........46400
 C.....DO NODEWISE CALCULATIONS IN MATRIX EQUATION FOR P AND/OR U         SUTRA........46500
       CALL NODAL(ML,VOL,PMAT,PVEC,UMAT,UVEC,PITER,UITER,PM1,UM1,UM2,     SUTRA........46600
@@ -13031,6 +13042,22 @@ C.....SET SPECIFIED P AND U CONDITIONS IN MATRIX EQUATION FOR P AND/OR U SUTRA..
       CALL BC(ML,PMAT,PVEC,UMAT,UVEC,IPBC,PBC,IUBC,UBC,QPLITR,JA,        SUTRA........47100
      1   GNUP1,GNUU1,
      2   CJGNUP) ! Chengji 2015-03-31
+
+C      CALCULATE THE FIRST WATER AND SOLUTE STORAGE BY MWATER=VOL*POR*SW*RHO AND
+C     MSOLUTE=VOL*POR*SW*RHO*UM1 (UM1 IS TESTIFIED FROM HERE). THE REASON OF 
+C      ALLOCATING THE TERM HERE IS DUE TO FACT OF VOL GETTING VALUE AT SUB GLOBAN
+C     NOT AT THE BEGINNING OF THE TIME ITERATION.
+C     ANOTHER REASON THAT THIS CAN NOT BE MERGED WITH THE FOLLOWING CALL IS THAT 
+C     SATURATION ARRAY DO NOT HAVE PAST ONES
+
+      IF (IT.EQ.ITRST+1.AND.ITER.EQ.1) THEN
+      NWS=.FALSE.
+      CALL WSMASS(WMA,SMA,VOL,POR
+     1,SW,RHO,SOP,DSWDP,PVEC,PM1,UM1,UM2,CS1,CS2,CS3,SL,SR,DPDTITR,UVEC
+     2,ITER,SM,QPLITR,QIN,QINITR,UIN,IPBC,GNUP1,PBC,UBC,ISTOP
+     3,QSB,USB,QPB,UPB,NWS,WMAM,IQSOP,CJGNUP)
+      NWS=.TRUE.
+      ENDIF
 C                                                                        SUTRA........47300
 C.....MATRIX EQUATION FOR P AND/OR U COMPLETE.  SOLVE EQUATIONS:         SUTRA........47400
 C        WITH DIRECT SOLVER,                                             SUTRA........47500
@@ -13119,6 +13146,10 @@ C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  SUTRA..
 C                                                                        SUTRA........55800
  7500 CONTINUE                                                           SUTRA........55900
       IF(ISTOP.NE.-1.AND.IT.EQ.ITMAX) ISTOP=1                            SUTRA........56000
+      CALL WSMASS(WMA,SMA,VOL,POR,SW,RHO
+     1,SOP,DSWDP,PVEC,PM1,UM1,UM2,CS1,CS2,CS3,SL,SR,DPDTITR,UVEC,ITER
+     2,SM,QPLITR,QIN,QINITR,UIN,IPBC,GNUP1,PBC,UBC,ISTOP,QSB,USB
+     3,QPB,UPB,NWS,WMAM,IQSOP,CJGNUP)
 C                                                                        SUTRA........56100
 C.....OUTPUT RESULTS FOR TIME STEP IN ACCORDANCE WITH PRINT CYCLES       SUTRA........56200
 C                                                                        SUTRA........56300

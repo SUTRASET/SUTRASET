@@ -11,7 +11,7 @@ C ***   (4) TIME-DEPENDENT ENERGY OR SOLUTE MASS SOURCES                 BCTIME.
 C                                                                        BCTIME........1100
       SUBROUTINE BCTIME(IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,      BCTIME........1200
      1   IPBCT,IUBCT,IQSOPT,IQSOUT,X,Y,Z,IBCPBC,IBCUBC,IBCSOP,IBCSOU,
-     2   PITER,UITER,CJGNUP,RCIT,SW,POR,NREG,YY)     ! Chengji 2015-03-31
+     2   PITER,UITER,CJGNUP,RCIT,SW,POR,NREG,YY,SAREA,SM)     ! Chengji 2015-03-31
       USE M_PARAMS
       USE M_ET
       USE M_TIDE
@@ -25,8 +25,8 @@ C      IMPLICIT NONE
      1   QIN(NN),UIN(NN),QUIN(NN),IQSOP(NSOP),IQSOU(NSOU),               BCTIME........1600
      2   X(NN),Y(NN),Z(NN),CJGNUP(NBCN)      ! Chengji 2015-03-31
       DIMENSION PITER(NN)  ! Chengji 2015-03-31 
-      DIMENSION NREG(NN),YY(NN)
-      DIMENSION SW(NN),POR(NN),RCIT(NN),UITER(NN)
+      DIMENSION NREG(NN),YY(NSOP),SAREA(NSOP)
+      DIMENSION SW(NN),POR(NN),RCIT(NN),UITER(NN),SM(NN)
       INTEGER(1) IBCPBC(NBCN),IBCUBC(NBCN),IBCSOP(NSOP),IBCSOU(NSOU)     BCTIME........1800
       COMMON /DIMS/ NN,NE,NIN,NBI,NCBI,NB,NBHALF,NPBC,NUBC,              BCTIME........1900
      1   NSOP,NSOU,NBCN,NCIDB                                            BCTIME........2000
@@ -151,7 +151,7 @@ C      WRITE(*,*) QET,UET,PET,UVM,NGT,ITE
 C      WRITE(*,*) TASP,TANE,TPSP,TPNP,TM,RHOST,SC
 C      TIDE=4.6+1.5*SIN(2*3.1415926*TSC/12/60/60)+0.5*SIN(2*3.1415926*IT*60/12.42/60/60)
 C      TIDE=TM+TASP*SIN(2.D0*PI*IT*60/12/60/60)+TANP*SIN(2*PI*IT*60/12.42/60/60)
-      TIDE=TM+TASP*SIN(2.D0*PI*TSEC/TPSP)+TANP*SIN(2.D0*PI*TSEC/TPNP)
+      TIDE=TM+TASP*SIN(2.D0*PI*TSEC/TPSP)+TANE*SIN(2.D0*PI*TSEC/TPNP)
 C      TIDE=4.2D0+1.0D0*SIN(TSEC*3.1415926D0/360.D0/60.D0)       ! Chengji 2015-03-31
       IF (IT.EQ.1) THEN  
           OPEN(21,FILE='TIDE.DAT',STATUS='UNKNOWN')   
@@ -237,17 +237,13 @@ C                                                                        BCTIME.
       IF(I) 500,600,600                                                  BCTIME.......17700
   500 CONTINUE                                                           BCTIME.......17800
       IF(PITER(IABS(I)).LT.PET.AND.Y(IABS(I)).GT.TIDE) THEN
-      CALL EVAPORATION (AET,PITER(IABS(I)),UITER(IABS(I))
-     1,RCIT(IABS(I))
-     2,RSC,298.D0,POR(IABS(I)),SW(IABS(I))
-     3,NREG(IABS(I)),YY(IABS(I)))
-!          SURF=SURFRSIS(PC,POR,SW,MSR,KREG,TSK,YY)
-
-!          AET=QET*RAVT/ (RAVT+)
+      CALL EVAPORATION (AET,PITER(IABS(I)),UITER(IABS(I)),RCIT(IABS(I))
+     2,298.D0,POR(IABS(I)),SW(IABS(I))
+     3,NREG(IABS(I)),YY(IQP),SM(IABS(I))/SAREA(IQP))
 C      0.004 M/DAY /3600/24  DAY/S *2M *1M * 1000 KG/M3    =[KG/S]
 C     QET (M/S) * 2 (M) *1 (M) * 1000 KG/M3 = [KG/S] 
 !            QIN(-I)=-QET*2.D0*1.D0*1.D3 
-            QIN(-I)=-AET*2.D0*1.D0*1.D3 
+            QIN(-I)=-AET*SAREA(IQP)*1.D3 
             UIN(-I)=UET
       ELSE
             QIN(-I)=0.D0
