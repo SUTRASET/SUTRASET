@@ -3,7 +3,10 @@
 ############################
 ## make ou make all : compiling
 ## make clean       : cleaning objects, modules et executables
-
+## THE MERIT OF USING MAKEFILE IS
+## 1. many complex make commands can be convinently put into one file
+## 2. one does not need to recompile the object file of which the source code
+## didn't change.
 ## Create gversion file for version control
 GV=gversion.f90
 ##echo "#define GIT_REF \"`git show-ref refs/heads/master | cut -d " " -f 1 | cut -c 31-40`\"" >

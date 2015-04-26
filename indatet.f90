@@ -44,6 +44,9 @@ SUBROUTINE INDATET ()
   ERRCOD = 'ET'      
   CALL READIF(K1, 0, INTFIL, ERRCOD)                                
   READ(INTFIL,*) QET,UET,PET,UVM,NGT,ITE 
+  ERRCOD = 'ET2'      
+  CALL READIF(K1, 0, INTFIL, ERRCOD)                                
+  READ(INTFIL,*) TMA,TMI,ALF,RS,RH,AP,BP,U2,TSD,SCF
   ERRCOD = 'SWCC'
   CALL READIF(K1, 0, INTFIL, ERRCOD)                                
   READ(INTFIL,*) SWRES1,AA1,VN1,SWRES2,AA2,VN2,SWRES3,DLAM3,PSICB3, &
