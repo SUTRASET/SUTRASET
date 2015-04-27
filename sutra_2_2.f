@@ -1161,6 +1161,20 @@ C.....LANGMUIR SORPTION MODEL                                            ADSORB.
       SL(I)=CS1(I)                                                       ADSORB........6900
       SR(I)=CS1(I)*CHI2*RHOW0*U(I)*U(I)                                  ADSORB........7000
  1000 CONTINUE                                                           ADSORB........7100
+      GOTO 2000
+
+C.....SOLID MODEL
+    1 IF(ADSMOD.NE.'SOLID') GOTO 2000
+      DO 2 I=1,NN
+      IF (U(I).LT.UVM)THEN
+      CS1(I)=0.D0
+      ELSE
+      CS1(I)=CHI1*RHOW0
+      ENDIF
+      CS2(I)=0.D0
+      CS3(I)=0.D0
+      SL(I)=0.D0
+2     SR(I)=0.D0
 C                                                                        ADSORB........7200
  2000 RETURN                                                             ADSORB........7300
       END                                                                ADSORB........7400
@@ -6428,7 +6442,9 @@ C.....INPUT DATASET 11:  ADSORPTION PARAMETERS                           INDAT1.
  1235 FORMAT(////11X,'A D S O R P T I O N   P A R A M E T E R S'         INDAT1.......72600
      1   //16X,'NON-SORBING SOLUTE')                                     INDAT1.......72700
  1236 IF((ADSMOD.EQ.'NONE      ').OR.(ADSMOD.EQ.'LINEAR    ').OR.        INDAT1.......72800
-     1   (ADSMOD.EQ.'FREUNDLICH').OR.(ADSMOD.EQ.'LANGMUIR  ')) GOTO 1238 INDAT1.......72900
+     1   (ADSMOD.EQ.'FREUNDLICH').OR.(ADSMOD.EQ.'LANGMUIR  ').OR.
+     2 (ADSMOD.EQ.'SOLID')) GOTO 1238
+C     1   (ADSMOD.EQ.'FREUNDLICH').OR.(ADSMOD.EQ.'LANGMUIR  ')) GOTO 1238 INDAT1.......72900
       ERRCOD = 'INP-11-1'                                                INDAT1.......73000
       CALL SUTERR(ERRCOD, CHERR, INERR, RLERR)                           INDAT1.......73100
  1238 IF(ADSMOD.EQ.'LINEAR    ') WRITE(K3,1242) CHI1                     INDAT1.......73200
@@ -7630,13 +7646,13 @@ C.....BOUNDARY CONDITION INFORMATION FOR THIS TIME STEP                  OUTBCOF
       IF (NSOPI.GT.0) THEN                                               OUTBCOF......21700
       DO 990 IQP=1,NSOPI                                                 OUTBCOF......21800
       I=IABS(IQSOP(IQP))                                                 OUTBCOF......21900
-      IF (QINITR(I).LE.0D0) THEN                                         OUTBCOF......22000
-         UU = UVEC(I)                                                    OUTBCOF......22100
-         UUCUT = CUTSML(UU)                                              OUTBCOF......22200
-      ELSE                                                               OUTBCOF......22300
+C      IF (QINITR(I).LE.0D0) THEN                                         OUTBCOF......22000
+C         UU = UVEC(I)                                                    OUTBCOF......22100
+C         UUCUT = CUTSML(UU)                                              OUTBCOF......22200
+C      ELSE                                                               OUTBCOF......22300
          UU = UIN(I)                                                     OUTBCOF......22400
          UUCUT = UU                                                      OUTBCOF......22500
-      END IF                                                             OUTBCOF......22600
+C      END IF                                                             OUTBCOF......22600
       QU=QINITR(I)*CW*UU                                                 OUTBCOF......22700
       IBC = IBCSOP(IQP)                                                  OUTBCOF......22800
       IF (IBC.NE.2) THEN                                                 OUTBCOF......22900

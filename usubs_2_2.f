@@ -238,12 +238,13 @@ C                                                                        BCTIME.
   500 CONTINUE                                                           BCTIME.......17800
       IF(PITER(IABS(I)).LT.PET.AND.Y(IABS(I)).GT.TIDE) THEN
       CALL EVAPORATION (AET,PITER(IABS(I)),UITER(IABS(I)),RCIT(IABS(I))
-     2,TMI,POR(IABS(I)),SW(IABS(I))
+     2,POR(IABS(I)),SW(IABS(I))
      3,NREG(IABS(I)),YY(IQP),SM(IABS(I))/SAREA(IQP))
 C      0.004 M/DAY /3600/24  DAY/S *2M *1M * 1000 KG/M3    =[KG/S]
 C     QET (M/S) * 2 (M) *1 (M) * 1000 KG/M3 = [KG/S] 
 !            QIN(-I)=-QET*2.D0*1.D0*1.D3 
-            QIN(-I)=-AET*SAREA(IQP)*1.D3 
+C     AET ENDS UP WITH A NEGATIVE VALUE!!!
+            QIN(-I)=AET*SAREA(IQP)*1.D3 
             UIN(-I)=UET
       ELSE
             QIN(-I)=0.D0
