@@ -1782,7 +1782,7 @@ C                                                                        BC.....
      2   GNUP1(NBCN),GNUU1(NBCN)                                         BC............1300
       DIMENSION JA(NDIMJA)                                               BC............1400
       DIMENSION KTYPE(2)                                                 BC............1500
-      DIMENSION CJGNUP(NBCN) ! Chengji 2015-03-31
+      DIMENSION CJGNUP(NPBC) ! Chengji 2015-03-31
       COMMON /CONTRL/ GNUP,GNUU,UP,DTMULT,DTMAX,ME,ISSFLO,ISSTRA,ITCYC,  BC............1600
      1   NPCYC,NUCYC,NPRINT,NBCFPR,NBCSPR,NBCPPR,NBCUPR,IREAD,           BC............1700
      2   ISTORE,NOUMAT,IUNSAT,KTYPE                                      BC............1800
@@ -2570,7 +2570,7 @@ C                                                                        BUDGET.
      1   DSWDP(NN),RHO(NN),SOP(NN),PM1(NN),DPDTITR(NN),UM1(NN),UM2(NN),  BUDGET........2000
      2   CS1(NN),CS2(NN),CS3(NN),SL(NN),SR(NN),NREG(NN)                  BUDGET........2100
       DIMENSION KTYPE(2)                                                 BUDGET........2200
-      DIMENSION CJGNUP(NBCN) ! Chengji 2015-03-31
+      DIMENSION CJGNUP(NPBC) ! Chengji 2015-03-31
       COMMON /CONTRL/ GNUP,GNUU,UP,DTMULT,DTMAX,ME,ISSFLO,ISSTRA,ITCYC,  BUDGET........2300
      1   NPCYC,NUCYC,NPRINT,NBCFPR,NBCSPR,NBCPPR,NBCUPR,IREAD,           BUDGET........2400
      2   ISTORE,NOUMAT,IUNSAT,KTYPE                                      BUDGET........2500
@@ -12634,7 +12634,7 @@ C     --END WSMASS--
       TYPE (LLD), POINTER :: DENTS                                       SUTRA.........5900
       TYPE (LLD), ALLOCATABLE :: DENOB(:)                                SUTRA.........6000
       DIMENSION LCNT(NFLOMX)                                             SUTRA.........6100
-      DIMENSION CJGNUP(NBCN)  ! Chengji 2015-03-31
+      DIMENSION CJGNUP(NPBC)  ! Chengji 2015-03-31
       COMMON /BCSL/ ONCEBCS                                              SUTRA.........6200
       COMMON /CONTRL/ GNUP,GNUU,UP,DTMULT,DTMAX,ME,ISSFLO,ISSTRA,ITCYC,  SUTRA.........6300
      1   NPCYC,NUCYC,NPRINT,NBCFPR,NBCSPR,NBCPPR,NBCUPR,IREAD,           SUTRA.........6400
