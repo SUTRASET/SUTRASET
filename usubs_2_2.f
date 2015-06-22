@@ -41,6 +41,10 @@ C      IMPLICIT NONE
      2   ISTORE,NOUMAT,IUNSAT,KTYPE                                     
       DIMENSION KTYPE(2)                                                
       DOUBLE PRECISION TIDE
+      REAL SEEPX,SEEPY ! The x- and y-coordinate of seepage node
+      
+      SEEPX=0
+      SEEPY=0
 C      DIMENSION TIDE
 C                                                                        BCTIME........2600
 C.....DEFINITION OF REQUIRED VARIABLES                                   BCTIME........2700
@@ -162,7 +166,7 @@ C      TIDE=4.2D0+1.0D0*SIN(TSEC*3.1415926D0/360.D0/60.D0)       ! Chengji 2015-
       WRITE(21,99) IT, TSEC/3600./24.,TIDE
    99 FORMAT(I15,(1PE10.2,2X),500(1PE10.3,1X))
       
-	  DO 200 IP=1,NPBC                                                   BCTIME.......12000
+      DO 200 IP=1,NPBC                                                   BCTIME.......12000
       I=IPBC(IP)                                                         BCTIME.......12100
       IF(I) 100,200,200                                                  BCTIME.......12200
   100 CONTINUE                                                           BCTIME.......12300
@@ -172,7 +176,7 @@ C     PBC(IP) =  ((          ))                                          BCTIME.
 C     UBC(IP) =  ((          ))                                          BCTIME.......12700
 C******************************************************************************************
       PBC(IP)=9.8D0*(1000.D0+0.035D0*713.D0)*(TIDE-Y(IABS(I)))
-	  
+  
       IF(Y(IABS(I)).LE.TIDE) THEN
           UBC(IP)=SC
       ELSE
@@ -182,18 +186,23 @@ C*******************************************************************************
       IF(PITER(IABS(I)).GT.0.AND.Y(IABS(I)).GT.TIDE) THEN
           PBC(IP)=0.D0
           CJGNUP(IP)=GNUP
+          IF(Y(IABS(I))+PITER(IABS(I))/10245.GT.SEEPY) THEN
+             SEEPY=Y(IABS(I))+PITER(IABS(I))/10245
+             SEEPX=X(IABS(I))
+          ENDIF
       ELSEIF(PITER(IABS(I)).GT.0.AND.Y(IABS(I)).LE.TIDE) THEN
           CJGNUP(IP)=GNUP
       ELSEIF(PITER(IABS(I)).LT.0.AND.Y(IABS(I)).GT.TIDE) THEN
           CJGNUP(IP)=0.D0
       ELSEIF(PITER(IABS(I)).LT.0.AND.Y(IABS(I)).LE.TIDE) THEN
-	      CJGNUP(IP)=GNUP
+          CJGNUP(IP)=GNUP
       ENDIF
 C******************************************************************************************	  
 C.....IBCPBC(IP) MUST BE SET TO -1 TO INDICATE THAT PBC(IP)              BCTIME.......12800
 C        AND/OR UBC(IP) HAVE BEEN SET BY SUBROUTINE BCTIME.              BCTIME.......12900
       IBCPBC(IP) = -1                                                    BCTIME.......13000
   200 CONTINUE                                                           BCTIME.......13100
+      WRITE(20094,'(I5,3E16.7)') IT,TIDE,SEEPX,SEEPY
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  BCTIME.......13200
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  BCTIME.......13300
 C                                                                        BCTIME.......13400

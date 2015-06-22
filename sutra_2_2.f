@@ -189,6 +189,9 @@ C                                                                        SUTRA_M
       COMMON /TIMES/ DELT,TSEC,TMIN,THOUR,TDAY,TWEEK,TMONTH,TYEAR,       SUTRA_MAIN...18800
      1   TMAX,DELTP,DELTU,DLTPM1,DLTUM1,IT,ITBCS,ITRST,ITMAX,TSTART      SUTRA_MAIN...18900
       COMMON /VER/ VERNUM, VERNIN                                        SUTRA_MAIN...19000
+      
+      OPEN(20094,FILE='SEEPAGE.DAT')
+
 C....."NSLVRS" AND THE ARRAYS "SOLWRD" AND "SOLNAM" ARE INITIALIZED      SUTRA_MAIN...19100
 C        IN THE BLOCK-DATA SUBPROGRAM "BDINIT"                           SUTRA_MAIN...19200
 C                                                                        SUTRA_MAIN...19300
