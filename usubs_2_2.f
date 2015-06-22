@@ -202,7 +202,7 @@ C.....IBCPBC(IP) MUST BE SET TO -1 TO INDICATE THAT PBC(IP)              BCTIME.
 C        AND/OR UBC(IP) HAVE BEEN SET BY SUBROUTINE BCTIME.              BCTIME.......12900
       IBCPBC(IP) = -1                                                    BCTIME.......13000
   200 CONTINUE                                                           BCTIME.......13100
-      WRITE(20094,'(I5,3E16.7)') IT,TIDE,SEEPX,SEEPY
+      WRITE(20094,'(I10,3E16.7)') IT,TIDE,SEEPX,SEEPY
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  BCTIME.......13200
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  BCTIME.......13300
 C                                                                        BCTIME.......13400
