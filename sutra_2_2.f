@@ -1785,7 +1785,7 @@ C                                                                        BC.....
      2   GNUP1(NBCN),GNUU1(NBCN)                                         BC............1300
       DIMENSION JA(NDIMJA)                                               BC............1400
       DIMENSION KTYPE(2)                                                 BC............1500
-      DIMENSION CJGNUP(NPBC) ! Chengji 2015-03-31
+      DIMENSION CJGNUP(NBCN) ! Chengji 2015-03-31
       COMMON /CONTRL/ GNUP,GNUU,UP,DTMULT,DTMAX,ME,ISSFLO,ISSTRA,ITCYC,  BC............1600
      1   NPCYC,NUCYC,NPRINT,NBCFPR,NBCSPR,NBCPPR,NBCUPR,IREAD,           BC............1700
      2   ISTORE,NOUMAT,IUNSAT,KTYPE                                      BC............1800
@@ -2573,7 +2573,7 @@ C                                                                        BUDGET.
      1   DSWDP(NN),RHO(NN),SOP(NN),PM1(NN),DPDTITR(NN),UM1(NN),UM2(NN),  BUDGET........2000
      2   CS1(NN),CS2(NN),CS3(NN),SL(NN),SR(NN),NREG(NN)                  BUDGET........2100
       DIMENSION KTYPE(2)                                                 BUDGET........2200
-      DIMENSION CJGNUP(NPBC) ! Chengji 2015-03-31
+      DIMENSION CJGNUP(NBCN) ! Chengji 2015-03-31
       COMMON /CONTRL/ GNUP,GNUU,UP,DTMULT,DTMAX,ME,ISSFLO,ISSTRA,ITCYC,  BUDGET........2300
      1   NPCYC,NUCYC,NPRINT,NBCFPR,NBCSPR,NBCPPR,NBCUPR,IREAD,           BUDGET........2400
      2   ISTORE,NOUMAT,IUNSAT,KTYPE                                      BUDGET........2500
@@ -7688,7 +7688,8 @@ C ***  TO PRINT BOUNDARY CONDITION INFORMATION AT SPECIFIED PRESSURE     OUTBCOP
 C ***  NODES IN A FLEXIBLE, COLUMNWISE FORMAT.  OUTPUT IS TO THE         OUTBCOP........500
 C ***  BCOP FILE.                                                        OUTBCOP........600
 C                                                                        OUTBCOP........700
-      SUBROUTINE OUTBCOP(PVEC,UVEC,PBC,UBC,QPLITR,GNUP1,IPBC,IBCPBC,     OUTBCOP........800
+C      SUBROUTINE OUTBCOP(PVEC,UVEC,PBC,UBC,QPLITR,GNUP1,IPBC,IBCPBC,     OUTBCOP........800
+      SUBROUTINE OUTBCOP(PVEC,UVEC,PBC,UBC,QPLITR,CJGNUP,IPBC,IBCPBC, 
      1   TITLE1,TITLE2,IIDPBC)                                           OUTBCOP........900
       USE ALLARR, ONLY : CIDBCS                                          OUTBCOP.......1000
       USE EXPINT                                                         OUTBCOP.......1100
@@ -7704,7 +7705,8 @@ C                                                                        OUTBCOP
       INTEGER(1) IBCPBC(NBCN)                                            OUTBCOP.......2100
       INTEGER IIDPBC(NBCN)                                               OUTBCOP.......2200
       DIMENSION PVEC(NNVEC),UVEC(NNVEC),PBC(NBCN),UBC(NBCN)              OUTBCOP.......2300
-      DIMENSION QPLITR(NBCN),GNUP1(NBCN)                                 OUTBCOP.......2400
+C      DIMENSION QPLITR(NBCN),GNUP1(NBCN)                                 OUTBCOP.......2400
+      DIMENSION QPLITR(NBCN),CJGNUP(NBCN)   
       DIMENSION IPBC(NBCN)                                               OUTBCOP.......2500
       DIMENSION KTYPE(2)                                                 OUTBCOP.......2600
       DIMENSION J5COL(NCOLMX), J6COL(NCOLMX)                             OUTBCOP.......2700
@@ -7903,7 +7905,8 @@ C.....BOUNDARY CONDITION INFORMATION FOR THIS TIME STEP                  OUTBCOP
       IF (NPBC.GT.0) THEN                                                OUTBCOP......22000
       DO 990 IP=1,NPBC                                                   OUTBCOP......22100
       I=IABS(IPBC(IP))                                                   OUTBCOP......22200
-      QPL = GNUP1(IP)*(PBC(IP)-PVEC(I))                                  OUTBCOP......22300
+C      QPL = GNUP1(IP)*(PBC(IP)-PVEC(I))                                  OUTBCOP......22300
+      QPL = CJGNUP(IP)*(PBC(IP)-PVEC(I)) 
       IF (QPLITR(IP).LE.0D0) THEN                                        OUTBCOP......22400
          UU = UVEC(I)                                                    OUTBCOP......22500
          UUCUT = CUTSML(UU)                                              OUTBCOP......22600
@@ -12637,7 +12640,7 @@ C     --END WSMASS--
       TYPE (LLD), POINTER :: DENTS                                       SUTRA.........5900
       TYPE (LLD), ALLOCATABLE :: DENOB(:)                                SUTRA.........6000
       DIMENSION LCNT(NFLOMX)                                             SUTRA.........6100
-      DIMENSION CJGNUP(NPBC)  ! Chengji 2015-03-31
+      DIMENSION CJGNUP(NBCN)  ! Chengji 2015-03-31
       COMMON /BCSL/ ONCEBCS                                              SUTRA.........6200
       COMMON /CONTRL/ GNUP,GNUU,UP,DTMULT,DTMAX,ME,ISSFLO,ISSTRA,ITCYC,  SUTRA.........6300
      1   NPCYC,NUCYC,NPRINT,NBCFPR,NBCSPR,NBCPPR,NBCUPR,IREAD,           SUTRA.........6400
@@ -13224,9 +13227,12 @@ C.....PRINT RESULTS TO BOUNDARY CONDITION OUTPUT FILES.                  SUTRA..
      2      IIDSOP)                                                      SUTRA........61100
       IF (PRNBCS)                                                        SUTRA........61200
      1   CALL OUTBCOS(QUIN,IQSOU,IBCSOU,TITLE1,TITLE2,IIDSOU)            SUTRA........61300
-      IF (PRNBCP)                                                        SUTRA........61400
-     1   CALL OUTBCOP(PVEC,UVEC,PBC,UBC,QPLITR,GNUP1,IPBC,IBCPBC,        SUTRA........61500
-     2      TITLE1,TITLE2,IIDPBC)                                        SUTRA........61600
+C      IF (PRNBCP)                                                        SUTRA........61400
+C     1   CALL OUTBCOP(PVEC,UVEC,PBC,UBC,QPLITR,GNUP1,IPBC,IBCPBC,        SUTRA........61500
+C     2      TITLE1,TITLE2,IIDPBC)                                        SUTRA........61600
+      IF (PRNBCP)                             
+     1   CALL OUTBCOP(PVEC,UVEC,PBC,UBC,QPLITR,CJGNUP,IPBC,IBCPBC, 
+     2      TITLE1,TITLE2,IIDPBC)                                 
       IF (PRNBCU)                                                        SUTRA........61700
      1   CALL OUTBCOU(UVEC,UBC,GNUU1,IUBC,IBCUBC,TITLE1,TITLE2,          SUTRA........61800
      2      IIDUBC)                                                      SUTRA........61900
