@@ -11,7 +11,7 @@ C ***   (4) TIME-DEPENDENT ENERGY OR SOLUTE MASS SOURCES                 BCTIME.
 C                                                                        BCTIME........1100
       SUBROUTINE BCTIME(IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,      BCTIME........1200
      1   IPBCT,IUBCT,IQSOPT,IQSOUT,X,Y,Z,IBCPBC,IBCUBC,IBCSOP,IBCSOU,
-     2   PITER,UITER,CJGNUP,RCIT,SW,POR,NREG,YY,SAREA,SM)     ! Chengji 2015-03-31
+     2   PM1,UITER,CJGNUP,RCIT,SW,POR,NREG,YY,SAREA,SM)     ! Chengji 2015-03-31
       USE M_PARAMS
       USE M_ET
       USE M_TIDE
@@ -25,7 +25,7 @@ C      IMPLICIT NONE
      1   QIN(NN),UIN(NN),QUIN(NN),IQSOP(NSOP),IQSOU(NSOU),               BCTIME........1600
      2   X(NN),Y(NN),Z(NN)
       DIMENSION CJGNUP(NBCN)      ! Chengji 2015-03-31
-      DIMENSION PITER(NN)  ! Chengji 2015-03-31 
+      DIMENSION PM1(NN)  ! Chengji 2015-03-31 
       DIMENSION NREG(NN),YY(NSOP),SAREA(NSOP)
       DIMENSION SW(NN),POR(NN),RCIT(NN),UITER(NN),SM(NN)
       INTEGER(1) IBCPBC(NBCN),IBCUBC(NBCN),IBCSOP(NSOP),IBCSOU(NSOU)     BCTIME........1800
@@ -183,18 +183,18 @@ C*******************************************************************************
           UBC(IP)=0.D0   
       ENDIF
       
-      IF(PITER(IABS(I)).GT.0.AND.Y(IABS(I)).GT.TIDE) THEN
+      IF(PM1(IABS(I)).GT.0.AND.Y(IABS(I)).GT.TIDE) THEN
           PBC(IP)=0.D0
           CJGNUP(IP)=GNUP
-          IF(Y(IABS(I))+PITER(IABS(I))/10245.GT.SEEPY) THEN
-             SEEPY=Y(IABS(I))+PITER(IABS(I))/10245
+          IF(Y(IABS(I))+PM1(IABS(I))/10245.GT.SEEPY) THEN
+             SEEPY=Y(IABS(I))+PM1(IABS(I))/10245
              SEEPX=X(IABS(I))
           ENDIF
-      ELSEIF(PITER(IABS(I)).GT.0.AND.Y(IABS(I)).LE.TIDE) THEN
+      ELSEIF(PM1(IABS(I)).GT.0.AND.Y(IABS(I)).LE.TIDE) THEN
           CJGNUP(IP)=GNUP
-      ELSEIF(PITER(IABS(I)).LT.0.AND.Y(IABS(I)).GT.TIDE) THEN
+      ELSEIF(PM1(IABS(I)).LT.0.AND.Y(IABS(I)).GT.TIDE) THEN
           CJGNUP(IP)=0.D0
-      ELSEIF(PITER(IABS(I)).LT.0.AND.Y(IABS(I)).LE.TIDE) THEN
+      ELSEIF(PM1(IABS(I)).LT.0.AND.Y(IABS(I)).LE.TIDE) THEN
           CJGNUP(IP)=GNUP
       ENDIF
 C******************************************************************************************	  
