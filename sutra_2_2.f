@@ -1101,6 +1101,7 @@ C ***  TO CALCULATE VALUES OF EQUILIBRIUM SORPTION PARAMETERS FOR        ADSORB.
 C ***  LINEAR, FREUNDLICH, AND LANGMUIR MODELS.                          ADSORB.........500
 C                                                                        ADSORB.........600
       SUBROUTINE ADSORB(CS1,CS2,CS3,SL,SR,U)                             ADSORB.........700
+      USE M_ET
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                ADSORB.........800
       CHARACTER*10 ADSMOD                                                ADSORB.........900
       DIMENSION CS1(NN),CS2(NN),CS3(NN),SL(NN),SR(NN),U(NN)              ADSORB........1000
@@ -1156,7 +1157,8 @@ C.....FREUNDLICH SORPTION MODEL                                          ADSORB.
       GOTO 2000                                                          ADSORB........6000
 C                                                                        ADSORB........6100
 C.....LANGMUIR SORPTION MODEL                                            ADSORB........6200
-  950 IF(ADSMOD.NE.'LANGMUIR  ') GOTO 2000                               ADSORB........6300
+C  950 IF(ADSMOD.NE.'LANGMUIR  ') GOTO 2000                               ADSORB........6300
+950   IF(ADSMOD.NE.'LANGMUIR  ') GOTO 1
       DO 1000 I=1,NN                                                     ADSORB........6400
       DD=1.D0+CHI2*RHOW0*U(I)                                            ADSORB........6500
       CS1(I)=(CHI1*RHOW0)/(DD*DD)                                        ADSORB........6600
@@ -1168,7 +1170,7 @@ C.....LANGMUIR SORPTION MODEL                                            ADSORB.
       GOTO 2000
 
 C.....SOLID MODEL
-    1 IF(ADSMOD.NE.'SOLID') GOTO 2000
+    1 IF(ADSMOD.NE.'SOLID     ') GOTO 2000
       DO 2 I=1,NN
       IF (U(I).LT.UVM)THEN
       CS1(I)=0.D0
@@ -6447,7 +6449,7 @@ C.....INPUT DATASET 11:  ADSORPTION PARAMETERS                           INDAT1.
      1   //16X,'NON-SORBING SOLUTE')                                     INDAT1.......72700
  1236 IF((ADSMOD.EQ.'NONE      ').OR.(ADSMOD.EQ.'LINEAR    ').OR.        INDAT1.......72800
      1   (ADSMOD.EQ.'FREUNDLICH').OR.(ADSMOD.EQ.'LANGMUIR  ').OR.
-     2 (ADSMOD.EQ.'SOLID')) GOTO 1238
+     2 (ADSMOD.EQ.'SOLID     ')) GOTO 1238
 C     1   (ADSMOD.EQ.'FREUNDLICH').OR.(ADSMOD.EQ.'LANGMUIR  ')) GOTO 1238 INDAT1.......72900
       ERRCOD = 'INP-11-1'                                                INDAT1.......73000
       CALL SUTERR(ERRCOD, CHERR, INERR, RLERR)                           INDAT1.......73100
@@ -9083,7 +9085,9 @@ C ***  TO PRINT NODE COORDINATES, PRESSURES, CONCENTRATIONS OR           OUTNOD.
 C ***  TEMPERATURES, AND SATURATIONS IN A FLEXIBLE, COLUMNWISE FORMAT.   OUTNOD.........500
 C ***  OUTPUT IS TO THE NOD FILE.                                        OUTNOD.........600
 C                                                                        OUTNOD.........700
-      SUBROUTINE OUTNOD(PVEC,UVEC,SW,X,Y,Z,TITLE1,TITLE2,BCSFL,BCSTR)    OUTNOD.........800
+C      SUBROUTINE OUTNOD(PVEC,UVEC,SW,X,Y,Z,TITLE1,TITLE2,BCSFL,BCSTR)    OUTNOD.........800
+      SUBROUTINE OUTNOD(PVEC,UVEC,SW,X,Y,Z,TITLE1,TITLE2,BCSFL,BCSTR,SM
+     1 ,WMA,SMA)
       USE EXPINT                                                         OUTNOD.........900
       USE SCHDEF                                                         OUTNOD........1000
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                OUTNOD........1100
@@ -9103,6 +9107,7 @@ C                                                                        OUTNOD.
       DIMENSION VCOL(NCOLMX),VVAR(7)                                     OUTNOD........2500
       DIMENSION J5COL(NCOLMX),J6COL(NCOLMX)                              OUTNOD........2600
       DIMENSION KTYPE(2)                                                 OUTNOD........2700
+      DIMENSION SM(NN),WMA(NN),SMA(NN)
       ALLOCATABLE TT(:),ITT(:),ISTORC(:),ISHORP(:),ISSATU(:)             OUTNOD........2800
       TYPE (LLD), POINTER :: DENTS                                       OUTNOD........2900
       COMMON /CLAY/ LAYSTR                                               OUTNOD........3000
@@ -9351,8 +9356,11 @@ C.....NODEWISE DATA FOR THIS TIME STEP                                   OUTNOD.
             VCOL(M) = VVAR(J5COL(M))                                     OUTNOD.......27300
   972    CONTINUE                                                        OUTNOD.......27400
          IF (PRINTN) THEN                                                OUTNOD.......27500
-            WRITE(K5,975) I,(CUTSML(VCOL(M)), M=2,NCOLS5)                OUTNOD.......27600
-  975       FORMAT (I9, 19(1PE15.7))                                     OUTNOD.......27700
+C            WRITE(K5,975) I,(CUTSML(VCOL(M)), M=2,NCOLS5)                OUTNOD.......27600
+C  975       FORMAT (I9, 19(1PE15.7))                                     OUTNOD.......27700
+      WRITE(K5,975) I,(CUTSML(VCOL(M)), M=2,NCOLS5),SM(I)
+     1       ,WMA(I),SMA(I)
+975       FORMAT (I9, 2(1PE15.7),10(1PE15.7))
          ELSE                                                            OUTNOD.......27800
             WRITE(K5,976) (CUTSML(VCOL(M)), M=1,NCOLS5)                  OUTNOD.......27900
   976       FORMAT (1X, 20(1PE15.7))                                     OUTNOD.......28000
@@ -12796,7 +12804,9 @@ C           FILES NOW.  (OTHERWISE, WAIT UNTIL STEADY-STATE FLOW         SUTRA..
 C           SOLUTION IS COMPUTED.)                                       SUTRA........20900
          IF (ISSFLO.EQ.0) THEN                                           SUTRA........21000
             IF (K5.NE.-1)                                                SUTRA........21100
-     1         CALL OUTNOD(PVEC,UVEC,SW,X,Y,Z,TITLE1,TITLE2,BCSFL,BCSTR) SUTRA........21200
+     1          CALL OUTNOD(PVEC,UVEC,SW,X,Y,Z,TITLE1,TITLE2,BCSFL,BCSTR
+     2          ,SM,WMA,SMA)
+C     1         CALL OUTNOD(PVEC,UVEC,SW,X,Y,Z,TITLE1,TITLE2,BCSFL,BCSTR) SUTRA........21200
             DO 650 NFLO=1,NFLOMX                                         SUTRA........21300
                IF (IUNIO(NFLO).NE.-1) THEN                               SUTRA........21400
                   IF (OFP(NFLO)%FRMT.EQ."OBS") THEN                      SUTRA........21500
@@ -13075,10 +13085,10 @@ C     SATURATION ARRAY DO NOT HAVE PAST ONES
 
       IF (IT.EQ.ITRST+1.AND.ITER.EQ.1) THEN
       NWS=.FALSE.
-      CALL WSMASS(WMA,SMA,VOL,POR
-     1,SW,RHO,SOP,DSWDP,PVEC,PM1,UM1,UM2,CS1,CS2,CS3,SL,SR,DPDTITR,UVEC
-     2,ITER,SM,QPLITR,QIN,QINITR,UIN,IPBC,GNUP1,PBC,UBC,ISTOP
-     3,QSB,USB,QPB,UPB,NWS,WMAM,IQSOP,CJGNUP)
+      CALL WSMASS(WMA,SMA,VOL,POR,SW,RHO,SOP,DSWDP,PVEC,
+     1 PM1,UM1,UM2,CS1,CS2,CS3,SL,SR,DPDTITR,UVEC,ITER,SM,QPLITR,
+     2 QIN,QINITR,UIN,IPBC,GNUP1,PBC,UBC,ISTOP,QSB,USB,QPB,UPB,NWS,
+     3 WMAM,IQSOP,CJGNUP)
       NWS=.TRUE.
       ENDIF
 C                                                                        SUTRA........47300
@@ -13207,8 +13217,10 @@ C.....CALCULATE AND PRINT FLUID MASS AND/OR ENERGY OR SOLUTE MASS BUDGET SUTRA..
 C.....PRINT NODEWISE AND ELEMENTWISE RESULTS TO OUTPUT FILES             SUTRA........59100
       PRNK5 = ((PRNDEF.OR.((IT.NE.0).AND.(MOD(IT,NCOLPR).EQ.0))          SUTRA........59200
      1         .OR.((ITREL.EQ.1).AND.(NCOLPR.GT.0))).AND.(K5.NE.-1))     SUTRA........59300
-      IF (PRNK5) CALL OUTNOD(PVEC,UVEC,SW,X,Y,Z,TITLE1,TITLE2,           SUTRA........59400
-     1   BCSFL,BCSTR)                                                    SUTRA........59500
+C      IF (PRNK5) CALL OUTNOD(PVEC,UVEC,SW,X,Y,Z,TITLE1,TITLE2,           SUTRA........59400
+C     1   BCSFL,BCSTR)                                                    SUTRA........59500
+      IF (PRNK5) CALL OUTNOD(PVEC,UVEC,SW,X,Y,Z,TITLE1,TITLE2,
+     1   BCSFL,BCSTR,SM,WMA,SMA)
       PRNK6 = ((PRNALL.OR.((IT.NE.0).AND.(MOD(IT,LCOLPR).EQ.0))          SUTRA........59600
      1         .OR.(ITREL.EQ.1)).AND.(K6.NE.-1))                         SUTRA........59700
       IF (PRNK6) CALL OUTELE(VMAG,VANG1,VANG2,IN,X,Y,Z,TITLE1,TITLE2,    SUTRA........59800

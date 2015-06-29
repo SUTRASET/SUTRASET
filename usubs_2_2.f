@@ -250,6 +250,9 @@ C                                                                        BCTIME.
       I=IQSOP(IQP)                                                       BCTIME.......17600
       IF(I) 500,600,600                                                  BCTIME.......17700
   500 CONTINUE                                                           BCTIME.......17800
+C      IF (IT.EQ.3044.AND.IABS(I).EQ.1651) THEN
+C        aabss=1.0D0
+C      ENDIF
       IF(PM1(IABS(I)).LT.PET.AND.Y(IABS(I)).GT.TIDE) THEN
       CALL EVAPORATION (AET,PM1(IABS(I)),UITER(IABS(I)),RCIT(IABS(I))
      2,POR(IABS(I)),SW(IABS(I))
