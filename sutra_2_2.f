@@ -9336,7 +9336,9 @@ C.....NODEWISE HEADER INFORMATION REPEATED BEFORE EACH TIME STEP         OUTNOD.
       PRINTN = (J5COL(1).EQ.1)                                           OUTNOD.......25300
       IF (PRINTN) THEN                                                   OUTNOD.......25400
          WRITE(K5,968) (COLTK5(J5COL(M)), M=1,NCOLS5)                    OUTNOD.......25500
-  968    FORMAT ("## ", 2X, A4, 19(A15))                                 OUTNOD.......25600
+C  968    FORMAT ("## ", 2X, A4, 19(A15))                                 OUTNOD.......25600
+968    FORMAT ("## ", 2X, A4, 2(A15),3(A15),1X,"            sm"
+     1, 7X,"   wmass",7X,"   smass")
       ELSE                                                               OUTNOD.......25700
          WRITE(K5,969) COLTK5(J5COL(1))(3:15),                           OUTNOD.......25800
      1      (COLTK5(J5COL(M)), M=2,NCOLS5)                               OUTNOD.......25900
