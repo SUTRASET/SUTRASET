@@ -13583,7 +13583,7 @@ C                                                                        ZERO...
 !       CHARACTER*80, DIMENSION(10):: CHERIN
 !       CHARACTER :: INTFIL*1000 
 !       K1 = 1
-!       OPEN(UNIT=3343,FILE='ET.DAT',STATUS='OLD')
+!       OPEN(UNIT=3343,FILE='ET.INP',STATUS='OLD')
 !       
 !       ERRCOD = 'REA-INP-3'
 !C       ERRCOD = 'ET'      
