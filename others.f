@@ -71,45 +71,54 @@ C     FIRST TIME COMING TO THIS SUBROUTINE
           CALL ZERO(QPB,NPBC,0.0D0)
           CALL ZERO(UPB,NPBC,0.0D0)
         DO 1 I=1,NN
-          WMA(I)=VOL(I)*POR(I)*SW(I)*RHO(I)
-          SMA(I)=WMA(I)*UM1(I)
-          WMAI=WMAI+WMA(I)                   !INITIAL OVERALL WATER MASS
-          SMAI=SMAI+SMA(I)                !INITIAL OVERALL SOLUTE MASS
-1        CONTINUE
+          WMA1(I)=VOL(I)*POR(I)*SW(I)*RHO(I)
+          SMA1(I)=WMA1(I)*UM1(I)
+          WMAI=WMAI+WMA1(I)                   !INITIAL OVERALL WATER MASS
+          SMAI=SMAI+SMA1(I)                !INITIAL OVERALL SOLUTE MASS
+          WMA(I)=WMA1(I)
+          SMA(I)=SMA1(I)
+1       CONTINUE
 C     SECOND TIME CALLING SWMASS
       ELSEIF (NWS) THEN         ! NOT THE FIRST TIME TO COME TO THIS SUB
         DO 2 I=1,NN
-          WMA1(I)=WMA(I)                             !LAST WATER MASS
-          SMA1(I)=SMA(I)                             !LAST SOLUTE MASS
+C          WMA1(I)=WMA(I)                             !LAST WATER MASS
+C          SMA1(I)=SMA(I)                             !LAST SOLUTE MASS
 C         RATE OF CHANGE IN TOTAL STORED FLUID DUE TO PRESSURE CHANGE
           TMP1=(1-ISSFLO/2)*RHO(I)*VOL(I)*
      1     (SW(I)*SOP(I)+POR(I)*DSWDP(I))*(PVEC(I)-PM1(I))   !/DELTP
 C         RATE OF CHANGE IN TOTAL STORED FLUID DUE TO CONCENTRATION CHANGE
           TMP2=(1-ISSFLO/2)*POR(I)*SW(I)*DRWDU*VOL(I)*
      1     (UM1(I)-UM2(I))                                   !/DLTUM1
-          WMA(I)=WMA(I)+TMP1+TMP2
+          WMA1(I)=WMA1(I)+TMP1+TMP2
 
 C         RATE OF CHANGE IN SOLUTE DUE TO CONCENTRATION CHANGE
           ESRV=POR(I)*SW(I)*RHO(I)*VOL(I)
           EPRSV=(1.D0-POR(I))*RHOS*VOL(I)
           DUDT=(1-ISSTRA)*(UVEC(I)-UM1(I))      ! HERE IT IS DU NOT DUDT
-          SMA(I)=SMA(I)+ESRV*CW*DUDT
+          SMA1(I)=SMA1(I)+ESRV*CW*DUDT
 C         RATE OF CHANGE OF ADSORBATE
           ADSP=EPRSV*CS1(I)*DUDT
-          SMA(I)=SMA(I)+ADSP
+          SMA1(I)=SMA1(I)+ADSP
           
 C         RATE OF CHANGE IN SOLUTE DUE TO CHANGE IN MASS OF FLUID
-          SMA(I)=SMA(I)+CW*UVEC(I)*(1-ISSFLO/2)*VOL(I)*
+          SMA1(I)=SMA1(I)+CW*UVEC(I)*(1-ISSFLO/2)*VOL(I)*
      1     (RHO(I)*(SW(I)*SOP(I)+POR(I)*DSWDP(I))*DPDTITR(I)*DELTP
      2     +POR(I)*SW(I)*DRWDU*(UM1(I)-UM2(I)))
 C         FIRST-ORDER PRODUCTION/DECAY OF SOLUTE
-          SMA(I)=SMA(I)+ESRV*PRODF1*UVEC(I)
+          SMA1(I)=SMA1(I)+ESRV*PRODF1*UVEC(I)
 C         FIRST-ORDER PRODUCTION/DECAY OF ADSORBATE
-          SMA(I)=SMA(I)+EPRSV*PRODS1*(SL(I)*UVEC(I)+SR(I))
+          SMA1(I)=SMA1(I)+EPRSV*PRODS1*(SL(I)*UVEC(I)+SR(I))
 C         ZERO-ORDER PRODUCTION/DECAY OF SOLUTE
-          SMA(I)=SMA(I)+ESRV*PRODF0
+          SMA1(I)=SMA1(I)+ESRV*PRODF0
 C         ZERO-ORDER PRODUCTION/DECAY OF ADSORBATE
-          SMA(I)=SMA(I)+EPRSV*PRODS0
+          SMA1(I)=SMA1(I)+EPRSV*PRODS0
+
+
+          WMA(I)=VOL(I)*POR(I)*SW(I)*RHO(I)
+          SMA(I)=WMA(I)*UVEC(I)
+C          IF (SMA(I).LT.0.D0) THEN
+C             bb=1
+C          ENDIF
 
 C      CALCULATING SOLID SALT SM (KG) AND 
           IF (UVEC(I).LE.UVM)THEN
@@ -141,8 +150,8 @@ C         GAIN/LOSS OF SOLUTE THROUGH FLUID SOURCES AND SINKS
       DO 5 I=1,NN
       QST=QST+QSB(I)
       UST=UST+USB(I)
-      WMAF=WMAF+WMA(I)
-      SMAF=SMAF+SMA(I)
+      WMAF=WMAF+WMA1(I)
+      SMAF=SMAF+SMA1(I)
 5      CONTINUE
       DO 6 I=1,NPBC
       QPT=QPT+QPB(I)
