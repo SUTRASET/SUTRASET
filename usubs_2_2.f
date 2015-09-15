@@ -175,7 +175,7 @@ C           TIME STEP IN WHICH PBC( ) CHANGES.                           BCTIME.
 C     PBC(IP) =  ((          ))                                          BCTIME.......12600
 C     UBC(IP) =  ((          ))                                          BCTIME.......12700
 C******************************************************************************************
-      PBC(IP)=9.8D0*(1000.D0+0.035D0*713.D0)*(TIDE-Y(IABS(I)))
+      PBC(IP)=9.8D0*(1000.D0+SC*713.D0)*(TIDE-Y(IABS(I)))
   
       IF(Y(IABS(I)).LE.TIDE) THEN
           UBC(IP)=SC
