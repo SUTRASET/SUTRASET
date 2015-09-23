@@ -9096,6 +9096,7 @@ C      SUBROUTINE OUTNOD(PVEC,UVEC,SW,X,Y,Z,TITLE1,TITLE2,BCSFL,BCSTR)    OUTNOD
       CHARACTER*8  HORP                                                  OUTNOD........1400
       CHARACTER*13 TORC                                                  OUTNOD........1500
       CHARACTER*15 COLTK5(7)                                             OUTNOD........1600
+      CHARACTER*15 COLTK3(3)
       CHARACTER*1 CPHORP,CPTORC,CPSATU                                   OUTNOD........1700
       CHARACTER*14 CTYPE2                                                OUTNOD........1800
       CHARACTER*80 LAYSTR                                                OUTNOD........1900
@@ -9134,7 +9135,10 @@ C      SUBROUTINE OUTNOD(PVEC,UVEC,SW,X,Y,Z,TITLE1,TITLE2,BCSFL,BCSTR)    OUTNOD
       DATA (COLTK5(MM), MM=1,7) /'Node',                                 OUTNOD........5100
      1   '              X', '              Y', '              Z',        OUTNOD........5200
      2   '       Pressure', '  Concentration', '     Saturation'/        OUTNOD........5300
-      SAVE COLTK5                                                        OUTNOD........5400
+      DATA (COLTK3(MM), MM=1,3) /'             SM',
+     1   '          WMASS', '          SMASS'/
+      SAVE COLTK5,COLTK3
+C      SAVE COLTK5                                                        OUTNOD........5400
 C                                                                        OUTNOD........5500
 C.....CALCULATE HEADERS ON FIRST CALL AND CREATE OUTPUT ON EACH CALL.    OUTNOD........5600
 C                                                                        OUTNOD........5700
@@ -9335,10 +9339,10 @@ C.....NODEWISE HEADER INFORMATION REPEATED BEFORE EACH TIME STEP         OUTNOD.
      4      /'## ', 92('='))                                             OUTNOD.......25200
       PRINTN = (J5COL(1).EQ.1)                                           OUTNOD.......25300
       IF (PRINTN) THEN                                                   OUTNOD.......25400
-         WRITE(K5,968) (COLTK5(J5COL(M)), M=1,NCOLS5)                    OUTNOD.......25500
-C  968    FORMAT ("## ", 2X, A4, 19(A15))                                 OUTNOD.......25600
-968    FORMAT ("## ", 2X, A4, 2(A15),3(A15),1X,"            sm"
-     1, 7X,"   wmass",7X,"   smass")
+C         WRITE(K5,968) (COLTK5(J5COL(M)), M=1,NCOLS5)                    OUTNOD.......25500
+         WRITE(K5,968) (COLTK5(J5COL(M)), M=1,NCOLS5),
+     1  (COLTK3(M), M=1,3)
+  968    FORMAT ("## ", 2X, A4, 19(A15))                                 OUTNOD.......25600
       ELSE                                                               OUTNOD.......25700
          WRITE(K5,969) COLTK5(J5COL(1))(3:15),                           OUTNOD.......25800
      1      (COLTK5(J5COL(M)), M=2,NCOLS5)                               OUTNOD.......25900
