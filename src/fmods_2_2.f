@@ -27,7 +27,7 @@ C                                                                        ALLARR.
       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE ::                     ALLARR........2700
      1   FWK ,B                                                          ALLARR........2800
       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE ::
-     1   SM,WMA,SMA,YY,SAREA
+     1   SM,WMA,SMA,YY,SAREA,WMA1,SMA1
 C     YY -- THE EFFECTIVE Y DISTANCE
 C   SAREA-- THE SURFACE AREA OF DATASET 17 NODES
       INTEGER, DIMENSION(:), ALLOCATABLE ::                              ALLARR........2900

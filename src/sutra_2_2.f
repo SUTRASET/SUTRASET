@@ -795,6 +795,7 @@ C        OR NELT                                                         SUTRA_M
       ALLOCATE(IN(NIN),IQSOP(NSOP),IQSOU(NSOU),IPBC(NBCN),IUBC(NBCN),    SUTRA_MAIN...79000
      1   NREG(NN),LREG(NE),JA(NDIMJA))                                   SUTRA_MAIN...79100
       ALLOCATE(WMA(NN),SMA(NN))
+      ALLOCATE(WMA1(NN),SMA1(NN))
       ALLOCATE(IIDPBC(NBCN),IIDUBC(NBCN),IIDSOP(NSOP),IIDSOU(NSOU))      SUTRA_MAIN...79200
       ALLOCATE(SAREA(NSOP),YY(NSOP))
 C.....ALLOCATE INTEGER(1) ARRAYS, EXCEPT THOSE THAT DEPEND ON BANDWIDTH  SUTRA_MAIN...79300
@@ -1086,7 +1087,8 @@ C.....CALL MAIN CONTROL ROUTINE, SUTRA                                   SUTRA_M
      5   PANGL1,PANGL2,PANGL3,PBC,UBC,QPLITR,GXSI,GETA,GZET,FWK,B,       SUTRA_MAIN..106900
      6   GNUP1,GNUU1,IN,IQSOP,IQSOU,IPBC,IUBC,OBSPTS,NREG,LREG,IWK,      SUTRA_MAIN..107000
      7   IA,JA,IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU,  SUTRA_MAIN..107100
-     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,WMA,SMA,YY,SAREA)
+     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,WMA,SMA,YY,SAREA,WMA1,
+     9   SMA1)
 C     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA_MAIN..107200
 C                                                                        SUTRA_MAIN..107300
 C.....TERMINATION SEQUENCE: DEALLOCATE ARRAYS, CLOSE FILES, AND END      SUTRA_MAIN..107400
@@ -12600,7 +12602,8 @@ C                                                                        SUTRA..
      5   PANGL1,PANGL2,PANGL3,PBC,UBC,QPLITR,GXSI,GETA,GZET,FWK,B,       SUTRA.........1300
      6   GNUP1,GNUU1,IN,IQSOP,IQSOU,IPBC,IUBC,OBSPTS,NREG,LREG,IWK,      SUTRA.........1400
      7   IA,JA,IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU,  SUTRA.........1500
-     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,WMA,SMA,YY,SAREA)
+     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,WMA,SMA,YY,SAREA,WMA1,
+     9   SMA1)
 C     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA.........1600
       USE ALLARR, ONLY : OBSDAT,CIDBCS                                   SUTRA.........1700
       USE LLDEF                                                          SUTRA.........1800
@@ -12651,6 +12654,7 @@ C     --END WSMASS--
       TYPE (OBSDAT), DIMENSION (NOBSN) :: OBSPTS                         SUTRA.........5700
       DIMENSION KTYPE(2)                                                 SUTRA.........5800
       DIMENSION WMA(NN),SMA(NN)
+      DIMENSION WMA1(NN),SMA1(NN)
       TYPE (LLD), POINTER :: DENTS                                       SUTRA.........5900
       TYPE (LLD), ALLOCATABLE :: DENOB(:)                                SUTRA.........6000
       DIMENSION LCNT(NFLOMX)                                             SUTRA.........6100
@@ -13094,7 +13098,7 @@ C     SATURATION ARRAY DO NOT HAVE PAST ONES
       CALL WSMASS(WMA,SMA,VOL,POR,SW,RHO,SOP,DSWDP,PVEC,
      1 PM1,UM1,UM2,CS1,CS2,CS3,SL,SR,DPDTITR,UVEC,ITER,SM,QPLITR,
      2 QIN,QINITR,UIN,IPBC,GNUP1,PBC,UBC,ISTOP,QSB,USB,QPB,UPB,NWS,
-     3 WMAM,IQSOP,CJGNUP)
+     3 WMAM,IQSOP,CJGNUP,WMA1,SMA1)
       NWS=.TRUE.
       ENDIF
 C                                                                        SUTRA........47300
@@ -13188,7 +13192,7 @@ C                                                                        SUTRA..
       CALL WSMASS(WMA,SMA,VOL,POR,SW,RHO
      1,SOP,DSWDP,PVEC,PM1,UM1,UM2,CS1,CS2,CS3,SL,SR,DPDTITR,UVEC,ITER
      2,SM,QPLITR,QIN,QINITR,UIN,IPBC,GNUP1,PBC,UBC,ISTOP,QSB,USB
-     3,QPB,UPB,NWS,WMAM,IQSOP,CJGNUP)
+     3,QPB,UPB,NWS,WMAM,IQSOP,CJGNUP,WMA1,SMA1)
 C                                                                        SUTRA........56100
 C.....OUTPUT RESULTS FOR TIME STEP IN ACCORDANCE WITH PRINT CYCLES       SUTRA........56200
 C                                                                        SUTRA........56300
