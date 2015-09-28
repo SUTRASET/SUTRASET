@@ -116,9 +116,6 @@ C         ZERO-ORDER PRODUCTION/DECAY OF ADSORBATE
 
           WMA(I)=VOL(I)*POR(I)*SW(I)*RHO(I)
           SMA(I)=WMA(I)*UVEC(I)
-C          IF (SMA(I).LT.0.D0) THEN
-C             bb=1
-C          ENDIF
 
 C      CALCULATING SOLID SALT SM (KG) AND 
           IF (UVEC(I).LE.UVM)THEN
