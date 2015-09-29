@@ -132,6 +132,8 @@ C                                                                        BCTIME.
 C                                                                        BCTIME.......10900
 C                                                                        BCTIME.......11000
 C                                                                        BCTIME.......11100
+C     ONE LINE TO AVOID TIDE AFFECTING EVAPORATION ONLY CASES
+      TIDE=-1.D10
       IF(IPBCT) 50,240,240                                               BCTIME.......11200
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  BCTIME.......11300
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  BCTIME.......11400
@@ -250,10 +252,10 @@ C                                                                        BCTIME.
       I=IQSOP(IQP)                                                       BCTIME.......17600
       IF(I) 500,600,600                                                  BCTIME.......17700
   500 CONTINUE                                                           BCTIME.......17800
-C      IF (IT.EQ.3044.AND.IABS(I).EQ.1651) THEN
+C      IF (IT.EQ.7194.AND.IABS(I).EQ.145) THEN
 C        aabss=1.0D0
 C      ENDIF
-      IF(PM1(IABS(I)).LT.PET.AND.Y(IABS(I)).GT.TIDE) THEN
+      IF(PM1(IABS(I)).LT.PET.AND.Y(IABS(I)).GE.TIDE) THEN
       CALL EVAPORATION (AET,PM1(IABS(I)),UITER(IABS(I)),RCIT(IABS(I))
      2,POR(IABS(I)),SW(IABS(I))
      3,NREG(IABS(I)),YY(IQP),SM(IABS(I))/SAREA(IQP))

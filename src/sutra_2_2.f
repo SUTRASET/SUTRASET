@@ -190,7 +190,6 @@ C                                                                        SUTRA_M
      1   TMAX,DELTP,DELTU,DLTPM1,DLTUM1,IT,ITBCS,ITRST,ITMAX,TSTART      SUTRA_MAIN...18900
       COMMON /VER/ VERNUM, VERNIN                                        SUTRA_MAIN...19000
       
-      OPEN(20094,FILE='SEEPAGE.DAT')
 
 C....."NSLVRS" AND THE ARRAYS "SOLWRD" AND "SOLNAM" ARE INITIALIZED      SUTRA_MAIN...19100
 C        IN THE BLOCK-DATA SUBPROGRAM "BDINIT"                           SUTRA_MAIN...19200
@@ -851,6 +850,9 @@ C                                                                        SUTRA_M
 C.....INPUT DATASETS 19 & 20 (SPECIFIED P AND U BOUNDARY CONDITIONS)     SUTRA_MAIN...83600
       IF(NBCN-1.GT.0) CALL BOUND(IPBC,PBC,IUBC,UBC,IPBCT,IUBCT,          SUTRA_MAIN...83700
      1   IBCPBC,IBCUBC,GNUP1,GNUU1)                                      SUTRA_MAIN...83800
+C.....WHEN THERE IS NEGATIVE NODE NUMBER IN DATASET 19, SEEPAGE WILL BE
+C      ENABLED
+      IF (IPBCT.EQ.-1) OPEN(20094,FILE='SEEPAGE.DAT')
 C                                                                        SUTRA_MAIN...83900
 C.....INPUT DATASET 22 (ELEMENT INCIDENCE [MESH CONNECTION] DATA)        SUTRA_MAIN...84000
       CALL CONNEC(IN)                                                    SUTRA_MAIN...84100
