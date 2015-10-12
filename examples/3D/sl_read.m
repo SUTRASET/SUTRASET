@@ -18,7 +18,7 @@ znod_idx  = strcmp(nod(1).label,'Z');
 p_idx  = strcmp(nod(1).label,'Pressure');
 c_idx  = strcmp(nod(1).label,'Concentration');
 s_idx  = strcmp(nod(1).label,'Saturation');
-sm_idx = strcmp(nod(1).label,'sm');
+sm_idx = strcmp(nod(1).label,'SM');
 
 
 xele_idx = strcmp(ele(1).label,'X origin');

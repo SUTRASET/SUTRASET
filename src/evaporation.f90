@@ -77,20 +77,13 @@ SUBROUTINE EVAPORATION (AET,PC,CC,RHO,POR,SW,KREG,YY,DS)
 !                      FORMAT STYLE  
 !1 FORMAT( 7(1PE20.7))
       ELSEIF (MET.EQ.3) THEN
-!---------------------FOR PAUSE--------------------------------------- 
-!      IF (SW.LT.0.005) THEN
-!      AA=1
-!      ENDIF
-!---------------------END PAUSE--------------------------------------- 
 !     CALCULATS ACTUAL EVAPORATION BASED ON A POTENTIAL ET      
-      SURF  =  SURFRSIS(PC,POR,SW,MSR,KREG,TSK,YY)
-      RSC   =  SALTRSIS(MSC,UVM,CC,DS)
-      AET   =  -QET*RAVT/ (RAVT+SURF+RSC)
-!!  ----------OUTPUT FOR CHECKING PURPOSE  ---------------
-!      IF (DABS(YY-0.065).LT.1D-6) THEN
-!         WRITE (49,"( 7(1PE15.7))")  PC,SW,TSK,SURF,RSC,AET
-!      ENDIF
-!!  ------------END OUTPUT---------------
+!      SURF  =  SURFRSIS(PC,POR,SW,MSR,KREG,TSK,YY)
+!      RSC   =  SALTRSIS(MSC,UVM,CC,DS)
+!      AET   =  -QET*RAVT/ (RAVT+SURF+RSC)
+!!!  ------------END OUTPUT---------------
+!      ELSEIF (MET.EQ.4) THEN
+      AET  = -QET
       ENDIF !MET
       RETURN
       END SUBROUTINE EVAPORATION
