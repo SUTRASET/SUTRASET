@@ -1,0 +1,12 @@
+'INP'  50  'Column.INP'
+'ICS'  55  'Column.ICS'
+'LST'  60  'Column.LST'
+'RST'  66  'Column.RST'
+'NOD'  70  'Column.NOD'
+'ELE'  80  'Column.ELE'
+'OBS'  90  'Column.OBS'
+'OBC'  92  'Column.OBC'
+'SMY'  95  'Column.SMY'
+'BCOP' 98  'Column.BCOP'
+'BCOF' 99  'Column.BCOF'
+

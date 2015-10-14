@@ -64,7 +64,10 @@
 ##
 ##  DATASET 11:  Adsorption Parameters
 ##     [ADSMOD]         [CHI1]         [CHI2]
- 'SOLID'          2000.d0        0.   
+# 'SOLID'          2000.d0        0.   
+# THE PARAMETER BELOW WILL GIVE RESULT SIMILAR TO 'SOLID' 500.d0   0.
+# 'FREUNDLICH' 2.D-47 0.05 
+ 'FREUNDLICH' 2.D-47 0.05
 ##
 ##  DATASET 12:  Production of Energy or Solute Mass
 ##     [PRODF0]       [PRODS0]       [PRODF1]       [PRODS1]

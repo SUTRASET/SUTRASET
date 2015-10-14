@@ -41,7 +41,7 @@ a.cz=8;
   mov.FrameRate = 5;mov.Quality=qt;
   open(mov);
 
-for nt=2:10:length(nod)-1
+for nt=2:1:length(nod)-1
 %% -------------  sub 1 ET over time  --------------
 a.sub1=subplot('position'...
      ,[fig_pos.left,fig_pos.bottom,...
@@ -157,9 +157,9 @@ a.sub2=subplot('position'...
       fig_pos.length-0.09,fig_pos.height+0.1]);
 plot(nod(nt).terms{s_idx}(1:inp.nn1)...
      ,nod(nt).terms{y_idx}(1:inp.nn1)...
-     ,'linewidth',a.lw) 
+     ,'linewidth',a.lw) ;hold on
 plot(slab(2,:,1),slab(1,:,1),'rd',slab(2,:,2),...
-    slab(1,:,2),'go',slab(2,:,3),slab(1,:,3),'cx','linewidth',a.lw);hold on;
+    slab(1,:,2),'go',slab(2,:,3),slab(1,:,3),'cx','linewidth',a.lw);hold off;
 axis([-0.05, 1.05,0,0.05])
 get(gca,'xtick');
 set(gca,'fontsize',12);
@@ -175,7 +175,7 @@ plot(nod(nt).terms{c_idx}(1:inp.nn1)...
      ,nod(nt).terms{y_idx}(1:inp.nn1)...
      ,'linewidth',a.lw) ;hold on
 plot(clab(2,:,1),clab(1,:,1),'rd',clab(2,:,2),clab(1,:,2)...
-,'go',clab(2,:,3),clab(1,:,3),'cx','MarkerSize',a.cz,'linewidth',a.lw)
+,'go',clab(2,:,3),clab(1,:,3),'cx','MarkerSize',a.cz,'linewidth',a.lw);hold off
 axis([-0.05, 0.28,0,0.05])
 get(gca,'xtick');
 set(gca,'fontsize',12);
