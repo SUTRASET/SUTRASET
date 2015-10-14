@@ -94,12 +94,11 @@ C         RATE OF CHANGE IN TOTAL STORED FLUID DUE TO CONCENTRATION CHANGE
 C         RATE OF CHANGE IN SOLUTE DUE TO CONCENTRATION CHANGE
           ESRV=POR(I)*SW(I)*RHO(I)*VOL(I)
           EPRSV=(1.D0-POR(I))*RHOS*VOL(I)
-          DUDT=(1-ISSTRA)*(UVEC(I)-UM1(I))      ! HERE IT IS DU NOT DUDT
-          SMA1(I)=SMA1(I)+ESRV*CW*DUDT
+          DU=(1-ISSTRA)*(UVEC(I)-UM1(I))
+          SMA1(I)=SMA1(I)+ESRV*CW*DU
 C         RATE OF CHANGE OF ADSORBATE
-          ADSP=EPRSV*CS1(I)*DUDT
+          ADSP=EPRSV*CS1(I)*DU
           SMA1(I)=SMA1(I)+ADSP
-          
 C         RATE OF CHANGE IN SOLUTE DUE TO CHANGE IN MASS OF FLUID
           SMA1(I)=SMA1(I)+CW*UVEC(I)*(1-ISSFLO/2)*VOL(I)*
      1     (RHO(I)*(SW(I)*SOP(I)+POR(I)*DSWDP(I))*DPDTITR(I)*DELTP
@@ -121,12 +120,13 @@ C         THIS CAN BE AVOIDED USING SMA
           IF (SMA1(I).LT.0.D0) SMA1(I)=SMA(I)
 
 C         CALCULATING SOLID SALT SM (KG) AND 
-          IF (UVEC(I).LE.UVM)THEN
-            SM(I)=0.0
-          ELSE
-            SM(I)=SMA1(I)-UVM*ESRV
-            IF (SM(I).LE.0.D0) SM(I)=SMA(I)-UVM*ESRV
-          ENDIF
+          SM(I)=SM(I)+ADSP
+C          IF (UVEC(I).LE.UVM)THEN
+C            SM(I)=0.0
+C          ELSE
+C            SM(I)=SMA1(I)-UVM*ESRV
+C            IF (SM(I).LE.0.D0) SM(I)=SMA(I)-UVM*ESRV
+C          ENDIF
 
 C         GAIN/LOSS OF FLUID THROUGH FLUID SOURCES AND SINKS
           QSB(I)=QSB(I)+QIN(I)*DELTP
