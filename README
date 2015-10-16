@@ -1,0 +1,23 @@
+extended sutra considering evaporation and tidal forces
+
+1. it is noticed that choosing a normal compressbility for matrix and
+liquid would cause error, if liquid water saturation is low. this is 
+because liquid water pressure can reduced down to 1e-11 pa, if this 
+pressure multiplies a storativity 1e-4. still there is large amount
+of water in unsaturated zone.
+
+
+2. at the moment there is a issue on bcop output. specifically, terms associated with
+pressure are calulated based on current time step i.e., qin=gnup(pbs-pvec), which terms
+associated with concentration are calculated based on the previous time step. i.e., 
+qinc=gnup(bps-piter). This may cause non-consistency at one step when pbc is experiencing
+significant change. also this is the reason why solute mass balance in fort.21 is not 
+correct. (but water mass is excellent!)
+
+3. a set of parameters that can properly simulate salt precipitation
+'FREUNDLICH' 1.D-46 0.05
+it is been tested for simulation over 120 days using Peva. as 15mm/day
+it is found that 
+'FREUNDLICH' 2.D-45 0.05 
+can properly approximate solid2000, but the curve is too steep at the end so 
+artifitial evaporation spike may occur
