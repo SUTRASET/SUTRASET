@@ -96,7 +96,7 @@ C  (POSITIVE)
       SWRMS1=1.E0-SI
 
 C  USING VAN GENUCHTEN WATER RETENTION CURVE WITH FAYER EXTENTION
-      IF (KREG.EQ.0.OR.KREG.EQ.1)THEN
+      IF (KREG.EQ.1.OR.KREG.EQ.2)THEN
 C                                                                        UNSAT.........6700
 C                                                                        UNSAT.........6800
 C*********************************************************************** UNSAT.........6900
