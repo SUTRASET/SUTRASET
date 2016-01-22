@@ -70,10 +70,19 @@ C     FIRST TIME COMING TO THIS SUBROUTINE
           CALL ZERO(USB,NN,0.0D0)
           CALL ZERO(QPB,NPBC,0.0D0)
           CALL ZERO(UPB,NPBC,0.0D0)
+C         ITE==0 SM IS OBTAINED FROM SALT CURVE
+C         ITE==1 SM IS INHERITED FROM *.ICS FILE       
+C         WARNING!! THIS SALT CURVE MAY BE CHANGED! THIS IS ONLY FOR 'SOLID'
+C         CONDITIONS!
+        IF (ITE.EQ.0) THEN
+          DO 1213 I =1,NN
+            SM(I)=(1.D0-POR(I))*RHOS*VOL(I)*CS1(I)*UVEC(I)
+1213      CONTINUE
+        END IF
+
         DO 1 I=1,NN
           WMA1(I)=VOL(I)*POR(I)*SW(I)*RHO(I)
           SMA1(I)=WMA1(I)*UM1(I)
-          SM(I)=(1.D0-POR(I))*RHOS*VOL(I)*CS1(I)*UVEC(I)
           WMAI=WMAI+WMA1(I)                   !INITIAL OVERALL WATER MASS
           SMAI=SMAI+SMA1(I)                !INITIAL OVERALL SOLUTE MASS
           WMA(I)=WMA1(I)

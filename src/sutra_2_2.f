@@ -861,7 +861,8 @@ C.....IF USING OLD (VERSION 2D3D.1) OBSERVATION INPUT FORMAT, LOOK UP    SUTRA_M
 C        COORDINATES FOR OBSERVATION POINTS (NODES).                     SUTRA_MAIN...84400
       CALL INDATET()
       IF (UVM.NE.0.) ALLOCATE(SM(NN))
-      CALL ZERO(SM,NNVEC,0.0D0)
+C     THE INITIALIZATION OF SM GOES TO INDAT2
+C      CALL ZERO(SM,NNVEC,0.0D0)
       IF (NOBCYC.NE.-1) THEN                                             SUTRA_MAIN...84500
          DO 710 K=1,NOBS                                                 SUTRA_MAIN...84600
             I = OBSPTS(K)%L                                              SUTRA_MAIN...84700
@@ -1043,7 +1044,8 @@ C.....INPUT INITIAL OR RESTART CONDITIONS FROM THE ICS FILE AND          SUTRA_M
 C        INITIALIZE PARAMETERS                                           SUTRA_MAIN..102300
       CALL INDAT2(PVEC,UVEC,PM1,UM1,UM2,CS1,CS2,CS3,SL,SR,RCIT,SW,DSWDP, SUTRA_MAIN..102400
      1   PBC,IPBC,IPBCT,NREG,QIN,DPDTITR,GNUP1,GNUU1,UIN,UBC,QUIN,       SUTRA_MAIN..102500
-     2   IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU)        SUTRA_MAIN..102600
+     2   IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU,SM)
+C     2   IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU)        SUTRA_MAIN..102600
 C                                                                        SUTRA_MAIN..102700
 C.....COMPUTE AND OUTPUT DIMENSIONS OF SIMULATION                        SUTRA_MAIN..102800
       IF (K9.NE.-1) THEN                                                 SUTRA_MAIN..102900
@@ -6862,9 +6864,12 @@ C ***  THE SIMULATION.                                                   INDAT2.
 C                                                                        INDAT2.........700
       SUBROUTINE INDAT2(PVEC,UVEC,PM1,UM1,UM2,CS1,CS2,CS3,SL,SR,RCIT,    INDAT2.........800
      1   SW,DSWDP,PBC,IPBC,IPBCT,NREG,QIN,DPDTITR,GNUP1,GNUU1,UIN,UBC,   INDAT2.........900
-     2   QUIN,IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU)   INDAT2........1000
+     2   QUIN,IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU,
+     3   SM) 
+C     2   QUIN,IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU)   INDAT2........1000
       USE ALLARR, ONLY : CIDBCS                                          INDAT2........1100
       USE EXPINT                                                         INDAT2........1200
+      USE M_ET
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                INDAT2........1300
       CHARACTER*10 CPUNI,CUUNI                                           INDAT2........1400
       CHARACTER INTFIL*1000                                              INDAT2........1500
@@ -6877,6 +6882,7 @@ C                                                                        INDAT2.
      1   SR(NN),CS1(NN),CS2(NN),CS3(NN),RCIT(NN),SW(NN),DSWDP(NN),       INDAT2........2200
      2   PBC(NBCN),IPBC(NBCN),GNUP1(NBCN),GNUU1(NBCN),NREG(NN),QIN(NN),  INDAT2........2300
      3   DPDTITR(NN),UIN(NN),UBC(NBCN),QUIN(NN)                          INDAT2........2400
+      DIMENSION SM(NN)
       DIMENSION KTYPE(2)                                                 INDAT2........2500
       COMMON /CONTRL/ GNUP,GNUU,UP,DTMULT,DTMAX,ME,ISSFLO,ISSTRA,ITCYC,  INDAT2........2600
      1   NPCYC,NUCYC,NPRINT,NBCFPR,NBCSPR,NBCPPR,NBCUPR,IREAD,           INDAT2........2700
@@ -7125,6 +7131,46 @@ C     CALL ZERO(CS3,NN,0.0D0)                                            INDAT2.
       CALL ZERO(SR,NN,0.0D0)                                             INDAT2.......27000
       CALL ZERO(DPDTITR,NN,0.0D0)                                        INDAT2.......27100
  1000 CONTINUE                                                           INDAT2.......27200
+
+C.....START SOLID SALT INPUT........
+C      THIS SECTION IS CALLED FOR BOTH WARM AND COLD START 
+C     MAKE SURE THAT ITE IN ET.INP IS SET AS 1 SO THAT SM CAN BE 
+C       READ FROM *ICS FILE
+      ERRCOD = 'REA-ICS-4'
+      IF (ITE.EQ.1) THEN
+         CALL READIF(K2, 0, INTFIL, ERRCOD)
+         IF (INERR(1).NE.0) CALL SUTERR(ERRCOD, CHERR, INERR, RLERR)
+         IF (CUUNI.EQ.'UNIFORM') THEN
+            CALL READIF(K2, 0, INTFIL, ERRCOD)
+            BACKSPACE(K2)                                       
+            READ(K2,*,IOSTAT=INERR(1)) TUNI                     
+            IF (INERR(1).NE.0) THEN                             
+               ERRCOD = 'REA-ICS-3'                             
+               CALL SUTERR(ERRCOD, CHERR, INERR, RLERR)         
+            END IF                                              
+            DO 631 I=1,NN                                       
+               SM(I) = TUNI                                     
+ 631        CONTINUE                                            
+         ELSE IF (CUUNI.EQ.'NONUNIFORM') THEN                   
+            ERRCOD = 'REA-ICS-4'                                
+            CALL READIF(K2, 0, INTFIL, ERRCOD)                  
+            BACKSPACE(K2)                                       
+            READ(K2,*,IOSTAT=INERR(1)) (SM(I),I=1,NN)           
+            IF (INERR(1).NE.0) THEN                             
+               ERRCOD = 'REA-ICS-4'                             
+               CALL SUTERR(ERRCOD, CHERR, INERR, RLERR)         
+            END IF                                              
+         ELSE                                                   
+            ERRCOD = 'ICS-3-4'                                  
+            CALL SUTERR(ERRCOD, CHERR, INERR, RLERR)            
+         END IF     
+      ELSE IF (ITE.EQ.0) THEN
+            DO 639 I=1,NN                                       
+               SM(I) = 0.D0                                     
+ 639        CONTINUE                                            
+
+      END IF
+      
 C                                                                        INDAT2.......27300
 C.....SET STARTING TIME OF SIMULATION CLOCK, TSEC.  NOTE THAT THE VALUE  INDAT2.......27400
 C        OF TSTART WAS SET IN SUBROUTINE INDAT0, WHERE THE "TIME_STEPS"  INDAT2.......27500
@@ -10130,7 +10176,8 @@ C ***  THE SIMULATION.                                                   OUTRST.
 C                                                                        OUTRST.........600
       SUBROUTINE OUTRST(PVEC,UVEC,PM1,UM1,CS1,RCIT,SW,QIN,PBC,           OUTRST.........700
      1   UIN,UBC,QUIN,IBCPBC,IBCUBC,IBCSOP,IBCSOU,                       OUTRST.........800
-     2   IIDPBC,IIDUBC,IIDSOP,IIDSOU)                                    OUTRST.........900
+     2   IIDPBC,IIDUBC,IIDSOP,IIDSOU,SM)
+C     2   IIDPBC,IIDUBC,IIDSOP,IIDSOU)                                    OUTRST.........900
       USE ALLARR, ONLY : CIDBCS                                          OUTRST........1000
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                OUTRST........1100
       INTEGER(1) IBCPBC(NBCN),IBCUBC(NBCN),IBCSOP(NSOP),IBCSOU(NSOU)     OUTRST........1200
@@ -10138,6 +10185,7 @@ C                                                                        OUTRST.
       CHARACTER*8 VERNUM, VERNIN                                         OUTRST........1400
       DIMENSION PVEC(NNVEC),UVEC(NNVEC),PM1(NN),UM1(NN),CS1(NN),         OUTRST........1500
      1   RCIT(NN),SW(NN),PBC(NBCN),QIN(NN),UIN(NN),UBC(NBCN),QUIN(NN)    OUTRST........1600
+      DIMENSION SM(NN)
       COMMON /DIMS/ NN,NE,NIN,NBI,NCBI,NB,NBHALF,NPBC,NUBC,              OUTRST........1700
      1   NSOP,NSOU,NBCN,NCIDB                                            OUTRST........1800
       COMMON /DIMX2/ NELTA, NNVEC, NDIMIA, NDIMJA                        OUTRST........1900
@@ -10187,6 +10235,10 @@ C.....STORE SOLUTION                                                     OUTRST.
             WRITE(K4,'(A)') TRIM(ADJUSTL(CIDBCS(NC)))                    OUTRST........6300
   103    CONTINUE                                                        OUTRST........6400
       END IF                                                             OUTRST........6500
+C     OUTPUT SOLID SALT ON THE SURFACE
+      WRITE(K4,105)                  
+      WRITE(K4,110) (CUTSML(SM(I)),I=1,NN)
+C     END OUTPUT SOLID SALT
   105 FORMAT("'NONUNIFORM'")                                             OUTRST........6600
   110 FORMAT(1PE20.13,1X,1PE20.13,1X,1PE20.13,1X,1PE20.13)               OUTRST........6700
   112 FORMAT(I20,1X,I20,1X,I20,1X,I20)                                   OUTRST........6800
@@ -13328,7 +13380,8 @@ C        TO NEXT TIME STEP                                               SUTRA..
      1      (MOD(IT,ISTORE).EQ.0)))                                      SUTRA........68400
      2      CALL OUTRST(PVEC,UVEC,PM1,UM1,CS1,RCIT,SW,QIN,PBC,           SUTRA........68500
      3         UIN,UBC,QUIN,IBCPBC,IBCUBC,IBCSOP,IBCSOU,                 SUTRA........68600
-     4         IIDPBC,IIDUBC,IIDSOP,IIDSOU)                              SUTRA........68700
+     4         IIDPBC,IIDUBC,IIDSOP,IIDSOU,SM)  
+C     4         IIDPBC,IIDUBC,IIDSOP,IIDSOU)                              SUTRA........68700
          IF (ISTOP.EQ.0) GOTO 1000                                       SUTRA........68800
       END IF                                                             SUTRA........68900
 C                                                                        SUTRA........69000
