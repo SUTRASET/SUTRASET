@@ -262,7 +262,7 @@ C                                                                        FINDEF.
        IMPLICIT NONE
        DOUBLE PRECISION :: QET,UET,PET,UVM,NGT,TMA,TMI,
      1  ALF,RS,RH,AP,BP,U2,TSD,SCF
-       INTEGER ITE
+       INTEGER :: ITE
        SAVE
       END MODULE M_ET
 
