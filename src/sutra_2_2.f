@@ -13107,7 +13107,8 @@ C     3   PITER,CJGNUP)  ! Chengji 2015-03-31
 C                                                                        SUTRA........44300
 C.....SET SORPTION PARAMETERS FOR THIS TIME STEP                         SUTRA........44400
       IF(ML.NE.1.AND.ME.EQ.-1.AND.NOUMAT.EQ.0.AND.                       SUTRA........44500
-     1   ADSMOD.NE.'NONE      ') CALL ADSORB(CS1,CS2,CS3,SL,SR,UITER)    SUTRA........44600
+     1   ADSMOD.NE.'NONE      ') CALL ADSORB(CS1,CS2,CS3,SL,SR,UM1)
+C     1   ADSMOD.NE.'NONE      ') CALL ADSORB(CS1,CS2,CS3,SL,SR,UITER)    SUTRA........44600
 C                                                                        SUTRA........44700
 C.....DO ELEMENTWISE CALCULATIONS IN MATRIX EQUATION FOR P AND/OR U      SUTRA........44800
       IF (NOUMAT.EQ.0) THEN                                              SUTRA........44900
