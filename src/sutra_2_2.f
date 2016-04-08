@@ -1786,14 +1786,14 @@ C ***  TRANSPORT MATRIX EQUATIONS.                                       BC.....
 C                                                                        BC.............700
       SUBROUTINE BC(ML,PMAT,PVEC,UMAT,UVEC,IPBC,PBC,IUBC,UBC,QPLITR,JA,  BC.............800
      1   GNUP1,GNUU1,
-     2   CJGNUP)     ! Chengji 2015-03-31
+     2   CJGNUP,CJGNUU)     ! Chengji 2015-03-31
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                BC............1000
       DIMENSION PMAT(NELT,NCBI),PVEC(NNVEC),UMAT(NELT,NCBI),UVEC(NNVEC), BC............1100
      1   IPBC(NBCN),PBC(NBCN),IUBC(NBCN),UBC(NBCN),QPLITR(NBCN),         BC............1200
      2   GNUP1(NBCN),GNUU1(NBCN)                                         BC............1300
       DIMENSION JA(NDIMJA)                                               BC............1400
       DIMENSION KTYPE(2)                                                 BC............1500
-      DIMENSION CJGNUP(NBCN) ! Chengji 2015-03-31
+      DIMENSION CJGNUP(NBCN),CJGNUU(NBCN) ! Chengji 2015-03-31
       COMMON /CONTRL/ GNUP,GNUU,UP,DTMULT,DTMAX,ME,ISSFLO,ISSTRA,ITCYC,  BC............1600
      1   NPCYC,NUCYC,NPRINT,NBCFPR,NBCSPR,NBCPPR,NBCUPR,IREAD,           BC............1700
      2   ISTORE,NOUMAT,IUNSAT,KTYPE                                      BC............1800
@@ -1828,6 +1828,8 @@ C                                                                        BC.....
       IF(ML-1) 100,100,200                                               BC............4700
 C.....MODIFY EQUATION FOR P BY ADDING FLUID SOURCE AT SPECIFIED          BC............4800
 C        PRESSURE NODE                                                   BC............4900
+C  100 GPINL=-GNUP1(IP)                                                   BC............5000
+C      GPINR=GNUP1(IP)*PBC(IP)                                            BC............5100
   100 GPINL=-CJGNUP(IP)           ! Chengji 2015-03-31
       GPINR=CJGNUP(IP)*PBC(IP)    ! Chengji 2015-03-31
       PMAT(IMID,JMID)=PMAT(IMID,JMID)-GPINL                              BC............5200
@@ -1861,9 +1863,11 @@ C        AT SPECIFIED U NODE                                             BC.....
          IMID = JA(I)                                                    BC............8000
       END IF                                                             BC............8100
       IF(NOUMAT) 1200,1200,2000                                          BC............8200
- 1200 GUINL=-GNUU1(IUP)                                                  BC............8300
+C 1200 GUINL=-GNUU1(IUP)                                                  BC............8300
+ 1200 GUINL=-CJGNUU(IUP)                                                  BC............8300
       UMAT(IMID,JMID)=UMAT(IMID,JMID)-GUINL                              BC............8400
- 2000 GUINR=GNUU1(IUP)*UBC(IUP)                                          BC............8500
+ 2000 GUINR=CJGNUU(IUP)*UBC(IUP)                                          BC............8500
+C 2000 GUINR=GNUU1(IUP)*UBC(IUP)                                          BC............8500
  2500 UVEC(I)=UVEC(I)+GUINR                                              BC............8600
 C                                                                        BC............8700
  3000 CONTINUE                                                           BC............8800
@@ -2568,7 +2572,7 @@ C                                                                        BUDGET.
      1   DPDTITR,PBC,QPLITR,IPBC,IQSOP,POR,UVEC,UM1,UM2,UIN,QUIN,QINITR, BUDGET.........800
      2   IQSOU,UBC,IUBC,CS1,CS2,CS3,SL,SR,NREG,GNUP1,GNUU1,              BUDGET.........900
      3   IBCSOP,IBCSOU,
-     4   CJGNUP) ! Chengji 2015-03-31
+     4   CJGNUP,CJGNUU) ! Chengji 2015-03-31
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                BUDGET........1100
       CHARACTER*10 ADSMOD                                                BUDGET........1200
       CHARACTER*13 ULABL(2)                                              BUDGET........1300
@@ -2581,7 +2585,7 @@ C                                                                        BUDGET.
      1   DSWDP(NN),RHO(NN),SOP(NN),PM1(NN),DPDTITR(NN),UM1(NN),UM2(NN),  BUDGET........2000
      2   CS1(NN),CS2(NN),CS3(NN),SL(NN),SR(NN),NREG(NN)                  BUDGET........2100
       DIMENSION KTYPE(2)                                                 BUDGET........2200
-      DIMENSION CJGNUP(NBCN) ! Chengji 2015-03-31
+      DIMENSION CJGNUP(NBCN),CJGNUU(NBCN) ! Chengji 2015-03-31
       COMMON /CONTRL/ GNUP,GNUU,UP,DTMULT,DTMAX,ME,ISSFLO,ISSTRA,ITCYC,  BUDGET........2300
      1   NPCYC,NUCYC,NPRINT,NBCFPR,NBCSPR,NBCPPR,NBCUPR,IREAD,           BUDGET........2400
      2   ISTORE,NOUMAT,IUNSAT,KTYPE                                      BUDGET........2500
@@ -2648,6 +2652,7 @@ C                                                                        BUDGET.
       QPLNEG = 0D0                                                       BUDGET........8600
       DO 200 IP=1,NPBC                                                   BUDGET........8700
       I=IABS(IPBC(IP))                                                   BUDGET........8800
+C      TERM = GNUP1(IP)*(PBC(IP)-PVEC(I))                                 BUDGET........8900
       TERM = CJGNUP(IP)*(PBC(IP)-PVEC(I)) ! Chengji 2015-03-31
       QPLPOS = QPLPOS + MAX(0D0, TERM)                                   BUDGET........9000
       QPLNEG = QPLNEG + MIN(0D0, TERM)                                   BUDGET........9100
@@ -2718,6 +2723,7 @@ C                                                                        BUDGET.
      1   //22X,' NODE',5X,'INFLOW(+)/OUTFLOW(-)'/37X,'  (MASS/SECOND)'/) BUDGET.......15600
       DO 700 IP=1,NPBC                                                   BUDGET.......15700
       I=IABS(IPBC(IP))                                                   BUDGET.......15800
+C      WRITE(K3,450) I, GNUP1(IP)*(PBC(IP)-PVEC(I))                       BUDGET.......15900
       WRITE(K3,450) I, CJGNUP(IP)*(PBC(IP)-PVEC(I))  ! Chengji 2015-03-31
   700 CONTINUE                                                           BUDGET.......16000
 C                                                                        BUDGET.......16100
@@ -2820,7 +2826,8 @@ C                                                                        BUDGET.
       DO 1510 IU=1,NUBC                                                  BUDGET.......25800
       IUP=IU+NPBC                                                        BUDGET.......25900
       I=IABS(IUBC(IUP))                                                  BUDGET.......26000
-      QPLITR(IUP)=GNUU1(IUP)*(UBC(IUP)-UVEC(I))                          BUDGET.......26100
+C      QPLITR(IUP)=GNUU1(IUP)*(UBC(IUP)-UVEC(I))                          BUDGET.......26100
+      QPLITR(IUP)=CJGNUU(IUP)*(UBC(IUP)-UVEC(I))  
       TERM = QPLITR(IUP)                                                 BUDGET.......26200
       QULPOS = QULPOS + MAX(0D0, TERM)                                   BUDGET.......26300
       QULNEG = QULNEG + MIN(0D0, TERM)                                   BUDGET.......26400
@@ -8234,7 +8241,8 @@ C ***  NODES IN A FLEXIBLE, COLUMNWISE FORMAT.  OUTPUT IS TO THE         OUTBCOU
 C ***  BCOU FILE.                                                        OUTBCOU........600
 C                                                                        OUTBCOU........700
       SUBROUTINE OUTBCOU(UVEC,UBC,GNUU1,IUBC,IBCUBC,TITLE1,TITLE2,       OUTBCOU........800
-     1   IIDUBC)                                                         OUTBCOU........900
+     1   IIDUBC,CJGNUU) 
+C     1   IIDUBC)                                                         OUTBCOU........900
       USE ALLARR, ONLY : CIDBCS                                          OUTBCOU.......1000
       USE EXPINT                                                         OUTBCOU.......1100
       USE SCHDEF                                                         OUTBCOU.......1200
@@ -8249,6 +8257,7 @@ C                                                                        OUTBCOU
       INTEGER(1) IBCUBC(NBCN)                                            OUTBCOU.......2100
       INTEGER IIDUBC(NBCN)                                               OUTBCOU.......2200
       DIMENSION UVEC(NNVEC),UBC(NBCN),GNUU1(NBCN)                        OUTBCOU.......2300
+      DIMENSION CJGNUU(NBCN)
       DIMENSION IUBC(NBCN)                                               OUTBCOU.......2400
       DIMENSION KTYPE(2)                                                 OUTBCOU.......2500
       DIMENSION J5COL(NCOLMX), J6COL(NCOLMX)                             OUTBCOU.......2600
@@ -8444,7 +8453,8 @@ C.....BOUNDARY CONDITION INFORMATION FOR THIS TIME STEP                  OUTBCOU
       IUP = IU + NPBC                                                    OUTBCOU......21600
       I=IABS(IUBC(IUP))                                                  OUTBCOU......21700
       IBC = IBCUBC(IUP)                                                  OUTBCOU......21800
-      QPL = GNUU1(IUP)*(UBC(IUP)-UVEC(I))                                OUTBCOU......21900
+C      QPL = GNUU1(IUP)*(UBC(IUP)-UVEC(I))                                OUTBCOU......21900
+      QPL = CJGNUU(IUP)*(UBC(IUP)-UVEC(I))
       IF (IBC.NE.2) THEN                                                 OUTBCOU......22000
          IF (IBC.GT.0) THEN                                              OUTBCOU......22100
             WRITE(K13,980) I,                                            OUTBCOU......22200
@@ -12712,7 +12722,7 @@ C     --END WSMASS--
       TYPE (LLD), POINTER :: DENTS                                       SUTRA.........5900
       TYPE (LLD), ALLOCATABLE :: DENOB(:)                                SUTRA.........6000
       DIMENSION LCNT(NFLOMX)                                             SUTRA.........6100
-      DIMENSION CJGNUP(NBCN)  ! Chengji 2015-03-31
+      DIMENSION CJGNUP(NBCN),CJGNUU(NBCN)  ! Chengji 2015-03-31
       COMMON /BCSL/ ONCEBCS                                              SUTRA.........6200
       COMMON /CONTRL/ GNUP,GNUU,UP,DTMULT,DTMAX,ME,ISSFLO,ISSTRA,ITCYC,  SUTRA.........6300
      1   NPCYC,NUCYC,NPRINT,NBCFPR,NBCSPR,NBCPPR,NBCUPR,IREAD,           SUTRA.........6400
@@ -12744,6 +12754,7 @@ C     --END WSMASS--
   
       DO 1980 IP=1,NBCN  ! Chengji 2015-03-31
         CJGNUP(IP)=GNUP
+        CJGNUU(IP)=GNUU
  1980 CONTINUE
   
 C                                                                        SUTRA.........9000
@@ -13024,6 +13035,7 @@ C     NOTE: DPDTITR IS USED ONLY IN THE BUDGET                           SUTRA..
  2025 RCIT(I)=RHOW0+DRWDU*(UITER(I)-URHOW0)                              SUTRA........36200
       DO 2050 IP=1,NPBC                                                  SUTRA........36300
       I=IABS(IPBC(IP))                                                   SUTRA........36400
+C      QPLITR(IP)=GNUP1(IP)*(PBC(IP)-PITER(I))                            SUTRA........36500
       QPLITR(IP)=CJGNUP(IP)*(PBC(IP)-PITER(I)) ! Chengji 2015-03-31
  2050 CONTINUE                                                           SUTRA........36600
 C.....QINITR VALUE DIFFERS FROM QIN ONLY IF BCTIME OR BCSTEP CHANGED QIN SUTRA........36700
@@ -13073,6 +13085,7 @@ C.....SET PARAMETERS FROM MOST RECENT PRESSURE TIME STEP                 SUTRA..
  2450 RCITM1(I)=RCIT(I)                                                  SUTRA........41100
       DO 2475 IP=1,NPBC                                                  SUTRA........41200
       I=IABS(IPBC(IP))                                                   SUTRA........41300
+C      QPLITR(IP)=GNUP1(IP)*(PBC(IP)-PITER(I))                            SUTRA........41400
       QPLITR(IP)=CJGNUP(IP)*(PBC(IP)-PITER(I))  ! Chengji 2015-03-31
  2475 CONTINUE                                                           SUTRA........41500
  2480 DO 2500 I=1,NN                                                     SUTRA........41600
@@ -13097,7 +13110,7 @@ C        FOR THIS TIME STEP                                              SUTRA..
       IF (ITER.EQ.1.AND.IBCT.NE.4)                                       SUTRA........43500
      1   CALL BCTIME(IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,         SUTRA........43600
      2   IPBCT,IUBCT,IQSOPT,IQSOUT,X,Y,Z,IBCPBC,IBCUBC,IBCSOP,IBCSOU,
-     3   PM1,UM1,CJGNUP,RCIT,SW,POR,NREG,YY,SAREA,SM)
+     3   PM1,UM1,CJGNUP,CJGNUU,RCIT,SW,POR,NREG,YY,SAREA,SM)
 C     3   PITER,CJGNUP)  ! Chengji 2015-03-31
       IF ((ITER.EQ.1).AND.(K9.NE.-1))                                    SUTRA........43800
      1   CALL BCSTEP(SETBCS,IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,  SUTRA........43900
@@ -13139,7 +13152,7 @@ C                                                                        SUTRA..
 C.....SET SPECIFIED P AND U CONDITIONS IN MATRIX EQUATION FOR P AND/OR U SUTRA........47000
       CALL BC(ML,PMAT,PVEC,UMAT,UVEC,IPBC,PBC,IUBC,UBC,QPLITR,JA,        SUTRA........47100
      1   GNUP1,GNUU1,
-     2   CJGNUP) ! Chengji 2015-03-31
+     2   CJGNUP,CJGNUU) ! Chengji 2015-03-31
 
 C      CALCULATE THE FIRST WATER AND SOLUTE STORAGE BY MWATER=VOL*POR*SW*RHO AND
 C     MSOLUTE=VOL*POR*SW*RHO*UM1 (UM1 IS TESTIFIED FROM HERE). THE REASON OF 
@@ -13277,7 +13290,7 @@ C.....CALCULATE AND PRINT FLUID MASS AND/OR ENERGY OR SOLUTE MASS BUDGET SUTRA..
      2      PBC,QPLITR,IPBC,IQSOP,POR,UVEC,UM1,UM2,UIN,QUIN,QINITR,      SUTRA........58700
      3      IQSOU,UBC,IUBC,CS1,CS2,CS3,SL,SR,NREG,GNUP1,GNUU1,           SUTRA........58800
      4      IBCSOP,IBCSOU,
-     5      CJGNUP)  ! Chengji 2015-03-31
+     5      CJGNUP,CJGNUU)  ! Chengji 2015-03-31
       END IF                                                             SUTRA........59000
 C.....PRINT NODEWISE AND ELEMENTWISE RESULTS TO OUTPUT FILES             SUTRA........59100
       PRNK5 = ((PRNDEF.OR.((IT.NE.0).AND.(MOD(IT,NCOLPR).EQ.0))          SUTRA........59200
@@ -13312,7 +13325,8 @@ C     2      TITLE1,TITLE2,IIDPBC)                                        SUTRA.
      2      TITLE1,TITLE2,IIDPBC)                                 
       IF (PRNBCU)                                                        SUTRA........61700
      1   CALL OUTBCOU(UVEC,UBC,GNUU1,IUBC,IBCUBC,TITLE1,TITLE2,          SUTRA........61800
-     2      IIDUBC)                                                      SUTRA........61900
+     2      IIDUBC,CJGNUU) 
+C     2      IIDUBC)                                                      SUTRA........61900
 C.....PRINT RESULTS TO OBSERVATION OUTPUT FILES.  CHECK FOR OUTPUT       SUTRA........62000
 C       SCHEDULED WITHIN THE CURRENT TIME STEP AND PRINT IT.  IF THIS    SUTRA........62100
 C       IS THE INITIAL CONDITION (IT=0) OR THE FINAL TIME STEP, PRINT    SUTRA........62200

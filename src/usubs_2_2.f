@@ -11,7 +11,7 @@ C ***   (4) TIME-DEPENDENT ENERGY OR SOLUTE MASS SOURCES                 BCTIME.
 C                                                                        BCTIME........1100
       SUBROUTINE BCTIME(IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,      BCTIME........1200
      1   IPBCT,IUBCT,IQSOPT,IQSOUT,X,Y,Z,IBCPBC,IBCUBC,IBCSOP,IBCSOU,
-     2   PM1,UM1,CJGNUP,RCIT,SW,POR,NREG,YY,SAREA,SM)     ! Chengji 2015-03-31
+     2   PM1,UM1,CJGNUP,CJGNUU,RCIT,SW,POR,NREG,YY,SAREA,SM)     ! Chengji 2015-03-31
       USE M_PARAMS
       USE M_ET
       USE M_TIDE
@@ -24,7 +24,7 @@ C      IMPLICIT NONE
       DIMENSION IPBC(NBCN),PBC(NBCN),IUBC(NBCN),UBC(NBCN),               BCTIME........1500
      1   QIN(NN),UIN(NN),QUIN(NN),IQSOP(NSOP),IQSOU(NSOU),               BCTIME........1600
      2   X(NN),Y(NN),Z(NN)
-      DIMENSION CJGNUP(NBCN)      ! Chengji 2015-03-31
+      DIMENSION CJGNUP(NBCN),CJGNUU(NBCN)      ! Chengji 2015-03-31
       DIMENSION PM1(NN)  ! Chengji 2015-03-31 
       DIMENSION NREG(NN),YY(NSOP),SAREA(NSOP)
       DIMENSION SW(NN),POR(NN),RCIT(NN),UM1(NN),SM(NN)
@@ -229,6 +229,13 @@ C     NOTE: A TRANSPORT SOLUTION MUST OCCUR FOR ANY TIME STEP IN WHICH   BCTIME.
 C           UBC( ) CHANGES.  IN ADDITION, IF FLUID PROPERTIES ARE        BCTIME.......15300
 C           SENSITIVE TO 'U', THEN A FLOW SOLUTION MUST OCCUR AS WELL.   BCTIME.......15400
 C     UBC(IUP) =   ((          ))                                        BCTIME.......15500
+      UBC(IUP) = SC
+
+      IF(Y(IABS(I)).GT.TIDE) THEN
+          CJGNUU(IP)=0.D0
+      ELSEIF(Y(IABS(I)).LE.TIDE) THEN
+          CJGNUU(IP)=GNUU
+      ENDIF
 C.....IBCUBC(IUP) MUST BE SET TO -1 TO INDICATE THAT UBC(IUP)            BCTIME.......15600
 C        HAS BEEN SET BY SUBROUTINE BCTIME.                              BCTIME.......15700
       IBCUBC(IUP) = -1                                                   BCTIME.......15800
