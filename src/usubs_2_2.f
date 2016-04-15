@@ -232,9 +232,9 @@ C     UBC(IUP) =   ((          ))                                        BCTIME.
       UBC(IUP) = SC
 
       IF(Y(IABS(I)).GT.TIDE) THEN
-          CJGNUU(IU)=0.D0
+          CJGNUU(IUP)=0.D0
       ELSEIF(Y(IABS(I)).LE.TIDE) THEN
-          CJGNUU(IU)=GNUU
+          CJGNUU(IUP)=GNUU
       ENDIF
 C.....IBCUBC(IUP) MUST BE SET TO -1 TO INDICATE THAT UBC(IUP)            BCTIME.......15600
 C        HAS BEEN SET BY SUBROUTINE BCTIME.                              BCTIME.......15700
