@@ -182,21 +182,29 @@ C MOVEMENT THAT FORMS THE MENISCI IN BETWEEN THE PORE SPACE, THE WATER
 CBELOW RESIDUAL IS 
 C JUST FILM WATER THAT IS BOUNDED BY VAN DER WAAL FORCE
 C    SEE RELATIVEK.SAGE FOR REFERENCE
-C      SWSTAR=1.D0/AAPVNN
+      SWSTAR=1.D0/AAPVNN
 C      R E L K   =   DBLE (SQRT(SWSTAR)*                                  UNSAT........12400
 C     1                   (1.E0-(1.E0-SWSTAR**(1.E0/VNF))**(VNF))**2.E0)  UNSAT........12500
 C  TO20160511 A UPDATE FOR THE RELATIVE PERMEABILITY, THIS UPDATE IS IN
 C  RESPONSE TO A PHENOMENON THAT DRIED SOIL NEVER GETS WETTED UP AGAIN.
 C  THE FIRST ATTEMPT IS TO USE ACTUAL LIQUID WATER SATURATION AS
 C  EFFECTIVE SATURATION AS BELOW
-      SWSTAR =SW
+C      SWSTAR =SW
       R E L K   =   DBLE (SWSTAR**ECTO*                                
      1                   (1.E0-(1.E0-SWSTAR**(1.E0/VNF))**(VNF))**2.E0)
+
+      IF (MFT.NE.0) THEN
+          CALL PERFILM (SPF,RPF,PORM,TPM,PRES,SW,MFT)
+          RELK = RELK+SPF*RPF
+      ENDIF
+
+
+
 C         LET RELK EQUALS TO ZERO IS TO REDUCE A BUG IN *.ELE OUTPUT
 C         WHEN PSIC IS VERY SMALL, RELK MAY GO BELOW 1E-101, BUT THE 
 C         OUTPUT MAY NOT BE ABLE TO GENERATE IT AS 1-101 WHICH OTHER
 C         POSTPROCESSING PROGRAM DOES NOT UNDERSTAND
-          IF (RELK.LT.1.D-50) RELK=0.D0
+      IF (RELK.LT.1.D-90) RELK=0.D0
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  UNSAT........12600
 C                                                                        UNSAT........12700
 C*********************************************************************** UNSAT........12800
