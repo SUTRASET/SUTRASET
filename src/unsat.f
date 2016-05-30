@@ -193,6 +193,7 @@ C      SWSTAR =SW
       R E L K   =   DBLE (SWSTAR**ECTO*                                
      1                   (1.E0-(1.E0-SWSTAR**(1.E0/VNF))**(VNF))**2.E0)
 
+C     INCORPORATING FILM WATER FLOW INTO THE SYSTEM
       IF (MFT.NE.0) THEN
           CALL PERFILM (SPF,RPF,PORM,TPM,PRES,SW,MFT)
           RELK = RELK+SPF*RPF
