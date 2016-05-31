@@ -346,5 +346,6 @@ C                                                                        FINDEF.
       MODULE M_FILM
         IMPLICIT NONE
         DOUBLE PRECISION :: CORF,AGR,SWM,ASVL
+        DOUBLE PRECISION,PARAMETER :: PSICM=1.D3
         SAVE
       END MODULE M_FILM
