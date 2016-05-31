@@ -45,6 +45,7 @@ DEBUGEXE  =sutra_debug_gf
 SOURCES=    fmods_2_2.f \
 	indatet.f90 \
 	unsat.f \
+	perfilm.f \
 	ssubs_2_2.f \
 	usubs_2_2.f \
 	ft03.f90\
@@ -53,7 +54,6 @@ SOURCES=    fmods_2_2.f \
 	evaporation.f90\
 	surfrsis.f90\
 	$(GV)    \
-	perfilm.f\
 	sutra_2_2.f 
 ## object file from source.f90 (.f90 -> .o)               
 OBJECTS_1=$(SOURCES:.f90=.o)
