@@ -8709,11 +8709,13 @@ C.....VELOCITY HEADER INFORMATION REPEATED BEFORE EACH TIME STEP         OUTELE.
       PRINTE = (J6COL(1).EQ.1)                                           OUTELE.......21800
       IF (PRINTE) THEN                                                   OUTELE.......21900
          WRITE(K6,982) (COLTK6(J6COL(M)), M=1,NCOLS6)                    OUTELE.......22000
-  982    FORMAT ("## ", A8, 19(A15))                                     OUTELE.......22100
+  982    FORMAT ("## ", A8, 19(A15),"     REK")
+C  982    FORMAT ("## ", A8, 19(A15))                                     OUTELE.......22100
       ELSE                                                               OUTELE.......22200
          WRITE(K6,983) COLTK6(J6COL(1))(3:15),                           OUTELE.......22300
      1      (COLTK6(J6COL(M)), M=2,NCOLS6)                               OUTELE.......22400
-  983    FORMAT ("## ", A13, 19(A15))                                    OUTELE.......22500
+  983    FORMAT ("## ", A13, 19(A15),"      REK")
+C  983    FORMAT ("## ", A13, 19(A15))                                    OUTELE.......22500
       END IF                                                             OUTELE.......22600
 C                                                                        OUTELE.......22700
 C.....VELOCITY DATA FOR THIS TIME STEP                                   OUTELE.......22800
