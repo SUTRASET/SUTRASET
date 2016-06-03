@@ -10,6 +10,8 @@ C     SEE PAGE 165 FOR REFERENCE.
       DOUBLE PRECISION BP
       DATA BP/3.00061397378356D-24/
       SAVE BP
+      COMMON /PARAMS/ COMPFL,COMPMA,DRWDU,CW,CS,RHOS,SIGMAW,SIGMAS,
+     1   RHOW0,URHOW0,VISC0,PRODF1,PRODS1,PRODF0,PRODS0,CHI1,CHI2 
 C.....MFT=1, FILM TRANSPORT IS ENABLED BASED ON TOKUNAKA (2009) 
 C      AND ZHANG(2010) 
       IF (MFT.EQ.1)THEN
@@ -48,9 +50,9 @@ C          ENDIF
         ELSEIF (PRES.GE.0.D0)THEN
           RPF=1.D0
         ENDIF
-         OPEN(221,FILE='aaa.abd',STATUS='UNKNOWN',POSITION='APPEND')
-         write(221,*) swg,psic,swg,rhow0,psic,rpf,spf
-         CLOSE(221)
+C         OPEN(221,FILE='aaa.abd',STATUS='UNKNOWN',POSITION='APPEND')
+C         write(221,*) swg,psic,swg,rhow0,psic,rpf,spf
+C         CLOSE(221)
       ENDIF  
 
       RETURN 
