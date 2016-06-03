@@ -794,7 +794,7 @@ C        OR NELT                                                         SUTRA_M
       ALLOCATE(IN(NIN),IQSOP(NSOP),IQSOU(NSOU),IPBC(NBCN),IUBC(NBCN),    SUTRA_MAIN...79000
      1   NREG(NN),LREG(NE),JA(NDIMJA))                                   SUTRA_MAIN...79100
       ALLOCATE(WMA(NN),SMA(NN))
-      ALLOCATE(WMA1(NN),SMA1(NN))
+      ALLOCATE(WMA1(NN),SMA1(NN),REK(NE))
       ALLOCATE(IIDPBC(NBCN),IIDUBC(NBCN),IIDSOP(NSOP),IIDSOU(NSOU))      SUTRA_MAIN...79200
       ALLOCATE(SAREA(NSOP),YY(NSOP))
 C.....ALLOCATE INTEGER(1) ARRAYS, EXCEPT THOSE THAT DEPEND ON BANDWIDTH  SUTRA_MAIN...79300
@@ -861,6 +861,7 @@ C.....IF USING OLD (VERSION 2D3D.1) OBSERVATION INPUT FORMAT, LOOK UP    SUTRA_M
 C        COORDINATES FOR OBSERVATION POINTS (NODES).                     SUTRA_MAIN...84400
       CALL INDATET()
       IF (UVM.NE.0.) ALLOCATE(SM(NN))
+      CALL ZERO(REK,NE,0.0D0)
 C     THE INITIALIZATION OF SM GOES TO INDAT2
 C      CALL ZERO(SM,NNVEC,0.0D0)
       IF (NOBCYC.NE.-1) THEN                                             SUTRA_MAIN...84500
@@ -1092,7 +1093,7 @@ C.....CALL MAIN CONTROL ROUTINE, SUTRA                                   SUTRA_M
      6   GNUP1,GNUU1,IN,IQSOP,IQSOU,IPBC,IUBC,OBSPTS,NREG,LREG,IWK,      SUTRA_MAIN..107000
      7   IA,JA,IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU,  SUTRA_MAIN..107100
      8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,WMA,SMA,YY,SAREA,WMA1,
-     9   SMA1)
+     9   SMA1,REK)
 C     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA_MAIN..107200
 C                                                                        SUTRA_MAIN..107300
 C.....TERMINATION SEQUENCE: DEALLOCATE ARRAYS, CLOSE FILES, AND END      SUTRA_MAIN..107400
@@ -3435,7 +3436,9 @@ C                                                                        ELEMN2.
 C                                                                        ELEMN2........1300
       SUBROUTINE ELEMN2(ML,IN,X,Y,THICK,PITER,UITER,RCIT,RCITM1,POR,     ELEMN2........1400
      1   ALMAX,ALMIN,ATMAX,ATMIN,PERMXX,PERMXY,PERMYX,PERMYY,PANGLE,     ELEMN2........1500
-     2   VMAG,VANG,VOL,PMAT,PVEC,UMAT,UVEC,GXSI,GETA,PVEL,LREG,IA,JA)    ELEMN2........1600
+     2   VMAG,VANG,VOL,PMAT,PVEC,UMAT,UVEC,GXSI,GETA,PVEL,LREG,IA,JA
+     3   ,REK)
+C     2   VMAG,VANG,VOL,PMAT,PVEC,UMAT,UVEC,GXSI,GETA,PVEL,LREG,IA,JA)    ELEMN2........1600
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                ELEMN2........1700
       PARAMETER (NCOLMX=9)                                               ELEMN2........1800
       CHARACTER*80 ERRCOD,CHERR(10),UNAME,FNAME(0:13)                    ELEMN2........1900
@@ -3458,6 +3461,7 @@ C                                                                        ELEMN2.
       DIMENSION INERR(10), RLERR(10)                                     ELEMN2........3600
       DIMENSION J5COL(NCOLMX), J6COL(NCOLMX)                             ELEMN2........3700
       DIMENSION KTYPE(2)                                                 ELEMN2........3800
+      DIMENSION REK(NE)
       COMMON /CONTRL/ GNUP,GNUU,UP,DTMULT,DTMAX,ME,ISSFLO,ISSTRA,ITCYC,  ELEMN2........3900
      1   NPCYC,NUCYC,NPRINT,NBCFPR,NBCSPR,NBCPPR,NBCUPR,IREAD,           ELEMN2........4000
      2   ISTORE,NOUMAT,IUNSAT,KTYPE                                      ELEMN2........4100
@@ -3569,6 +3573,7 @@ C.....CALCULATE VELOCITY AT ELEMENT CENTROID WHEN REQUIRED               ELEMN2.
 C                                                                        ELEMN2.......14700
 C.....INCLUDE MESH THICKNESS IN NUMERICAL INTEGRATION                    ELEMN2.......14800
  3000  DO 3300 KG=1,4                                                    ELEMN2.......14900
+        REK(L)=REK(L)+RELKG(KG)/4.D0
  3300   DET(KG)=THICKG(KG)*DET(KG)                                       ELEMN2.......15000
 C                                                                        ELEMN2.......15100
 C.....CALCULATE PARAMETERS FOR FLUID MASS BALANCE AT GAUSS POINTS        ELEMN2.......15200
@@ -3771,7 +3776,8 @@ C                                                                        ELEMN3.
      1   ALMAX,ALMID,ALMIN,ATMAX,ATMID,ATMIN,                            ELEMN3........1500
      2   PERMXX,PERMXY,PERMXZ,PERMYX,PERMYY,PERMYZ,PERMZX,PERMZY,PERMZZ, ELEMN3........1600
      3   PANGL1,PANGL2,PANGL3,VMAG,VANG1,VANG2,VOL,PMAT,PVEC,            ELEMN3........1700
-     4   UMAT,UVEC,GXSI,GETA,GZET,PVEL,LREG,IA,JA)                       ELEMN3........1800
+     4   UMAT,UVEC,GXSI,GETA,GZET,PVEL,LREG,IA,JA,REK)  
+C     4   UMAT,UVEC,GXSI,GETA,GZET,PVEL,LREG,IA,JA)                       ELEMN3........1800
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                ELEMN3........1900
       PARAMETER (NCOLMX=9)                                               ELEMN3........2000
       CHARACTER*80 ERRCOD,CHERR(10),UNAME,FNAME(0:13)                    ELEMN3........2100
@@ -3785,6 +3791,7 @@ C                                                                        ELEMN3.
      5   GXSI(NE,8),GETA(NE,8),GZET(NE,8),LREG(NE)                       ELEMN3........2900
       DIMENSION VOL(NN),PMAT(NELT,NCBI),PVEC(NNVEC),UMAT(NELT,NCBI),     ELEMN3........3000
      1   UVEC(NNVEC)                                                     ELEMN3........3100
+      DIMENSION REK(NE)
       DIMENSION BFLOWE(8,8),DFLOWE(8),BTRANE(8,8),DTRANE(8,8),VOLE(8)    ELEMN3........3200
       DIMENSION F(8,8),W(8,8),DET(8),DFDXG(8,8),DFDYG(8,8),DFDZG(8,8),   ELEMN3........3300
      1   DWDXG(8,8),DWDYG(8,8),DWDZG(8,8)                                ELEMN3........3400
@@ -3930,6 +3937,7 @@ C.....CALCULATE PARAMETERS FOR FLUID MASS BALANCE AT GAUSS POINTS        ELEMN3.
        IF(ML-1) 3400,3400,6100                                           ELEMN3.......17400
  3400  SWTEST=0.D0                                                       ELEMN3.......17500
        DO 4000 KG=1,8                                                    ELEMN3.......17600
+        REK(L)=REK(L)+RELKG(KG)/8.D0
         SWTEST=SWTEST+SWG(KG)                                            ELEMN3.......17700
         ROMG=RHOG(KG)*RELKG(KG)/VISCG(KG)                                ELEMN3.......17800
         RXXG(KG)=PERMXX(L)*ROMG                                          ELEMN3.......17900
@@ -8486,7 +8494,8 @@ C ***  TO PRINT ELEMENT CENTROID COORDINATES AND VELOCITY COMPONENTS     OUTELE.
 C ***  IN A FLEXIBLE, COLUMNWISE FORMAT.  OUTPUT IS TO THE ELE FILE.     OUTELE.........500
 C                                                                        OUTELE.........600
       SUBROUTINE OUTELE(VMAG,VANG1,VANG2,IN,X,Y,Z,TITLE1,TITLE2,         OUTELE.........700
-     1   BCSFL,BCSTR)                                                    OUTELE.........800
+     1   BCSFL,BCSTR,REK) 
+C     1   BCSFL,BCSTR)                                                    OUTELE.........800
       USE EXPINT                                                         OUTELE.........900
       USE SCHDEF                                                         OUTELE........1000
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                OUTELE........1100
@@ -8502,6 +8511,7 @@ C                                                                        OUTELE.
       DIMENSION IN(NIN),IIN(8)                                           OUTELE........2100
       DIMENSION VMAG(NE),VANG1(NE),VANG2(NEX)                            OUTELE........2200
       DIMENSION X(NN),Y(NN),Z(NN)                                        OUTELE........2300
+      DIMENSION REK(NE)
       DIMENSION VCOL(NCOLMX),VVAR(7)                                     OUTELE........2400
       DIMENSION J5COL(NCOLMX),J6COL(NCOLMX)                              OUTELE........2500
       DIMENSION KTYPE(2)                                                 OUTELE........2600
@@ -8740,7 +8750,8 @@ C.....VELOCITY DATA FOR THIS TIME STEP                                   OUTELE.
             VCOL(M) = VVAR(J6COL(M))                                     OUTELE.......25900
  1984    CONTINUE                                                        OUTELE.......26000
          IF (PRINTE) THEN                                                OUTELE.......26100
-            WRITE(K6,1985) L,(CUTSML(VCOL(M)), M=2,NCOLS6)               OUTELE.......26200
+            WRITE(K6,1985) L,(CUTSML(VCOL(M)), M=2,NCOLS6),REK(L) 
+C            WRITE(K6,1985) L,(CUTSML(VCOL(M)), M=2,NCOLS6)               OUTELE.......26200
  1985       FORMAT (I9, 2X, 19(1PE15.7))                                 OUTELE.......26300
          ELSE                                                            OUTELE.......26400
             WRITE(K6,1986) (CUTSML(VCOL(M)), M=1,NCOLS6)                 OUTELE.......26500
@@ -12667,7 +12678,7 @@ C                                                                        SUTRA..
      6   GNUP1,GNUU1,IN,IQSOP,IQSOU,IPBC,IUBC,OBSPTS,NREG,LREG,IWK,      SUTRA.........1400
      7   IA,JA,IBCPBC,IBCUBC,IBCSOP,IBCSOU,IIDPBC,IIDUBC,IIDSOP,IIDSOU,  SUTRA.........1500
      8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR,SM,WMA,SMA,YY,SAREA,WMA1,
-     9   SMA1)
+     9   SMA1,REK)
 C     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA.........1600
       USE ALLARR, ONLY : OBSDAT,CIDBCS                                   SUTRA.........1700
       USE LLDEF                                                          SUTRA.........1800
@@ -12705,7 +12716,7 @@ C     8   IQSOPT,IQSOUT,IPBCT,IUBCT,BCSFL,BCSTR)                          SUTRA.
       DIMENSION ALMID(NEX),ATMID(NEX),                                   SUTRA.........4900
      1   VANG2(NEX),PERMXZ(NEX),PERMYZ(NEX),PERMZX(NEX),                 SUTRA.........5000
      2   PERMZY(NEX),PERMZZ(NEX),PANGL2(NEX),PANGL3(NEX)                 SUTRA.........5100
-      DIMENSION SM(NN)
+      DIMENSION SM(NN),REK(NE)
       DIMENSION YY(NSOP),SAREA(NSOP)
 C     REQUIRED BY WSMASS
       DIMENSION QSB(NN),USB(NN),QPB(NPBC),UPB(NPBC),WMAM(NN)
@@ -13098,6 +13109,7 @@ C.....INITIALIZE ARRAYS WITH VALUE OF ZERO                               SUTRA..
       IF(ML-1) 3000,3000,3300                                            SUTRA........42300
  3000 CALL ZERO(PMAT,MATDIM,0.0D0)                                       SUTRA........42400
       CALL ZERO(PVEC,NNVEC,0.0D0)                                        SUTRA........42500
+      CALL ZERO(REK,NE,0.0D0)
       CALL ZERO(VOL,NN,0.0D0)                                            SUTRA........42600
       IF(ML-1) 3300,3400,3300                                            SUTRA........42700
  3300 IF(NOUMAT) 3350,3350,3375                                          SUTRA........42800
@@ -13131,12 +13143,15 @@ C..... 3D PROBLEM                                                        SUTRA..
      2   ALMAX,ALMID,ALMIN,ATMAX,ATMID,ATMIN,                            SUTRA........45300
      3   PERMXX,PERMXY,PERMXZ,PERMYX,PERMYY,PERMYZ,PERMZX,PERMZY,PERMZZ, SUTRA........45400
      4   PANGL1,PANGL2,PANGL3,VMAG,VANG1,VANG2,VOL,PMAT,PVEC,            SUTRA........45500
-     5   UMAT,UVEC,GXSI,GETA,GZET,PVEL,LREG,IA,JA)                       SUTRA........45600
+     5   UMAT,UVEC,GXSI,GETA,GZET,PVEL,LREG,IA,JA,REK) 
+C     5   UMAT,UVEC,GXSI,GETA,GZET,PVEL,LREG,IA,JA)                       SUTRA........45600
        ELSE                                                              SUTRA........45700
 C..... 2D PROBLEM                                                        SUTRA........45800
        CALL ELEMN2(ML,IN,X,Y,Z,PITER,UITER,RCIT,RCITM1,POR,              SUTRA........45900
      2   ALMAX,ALMIN,ATMAX,ATMIN,PERMXX,PERMXY,PERMYX,PERMYY,PANGL1,     SUTRA........46000
-     3   VMAG,VANG1,VOL,PMAT,PVEC,UMAT,UVEC,GXSI,GETA,PVEL,LREG,IA,JA)   SUTRA........46100
+     3   VMAG,VANG1,VOL,PMAT,PVEC,UMAT,UVEC,GXSI,GETA,PVEL,LREG,IA,JA,
+     4   REK)
+C     3   VMAG,VANG1,VOL,PMAT,PVEC,UMAT,UVEC,GXSI,GETA,PVEL,LREG,IA,JA)   SUTRA........46100
        END IF                                                            SUTRA........46200
       END IF                                                             SUTRA........46300
 C    IQSOPT=-1 WHEN SOURCE AND SINK ARE DETERMINED BY BCTIME()
@@ -13302,7 +13317,8 @@ C     1   BCSFL,BCSTR)                                                    SUTRA.
       PRNK6 = ((PRNALL.OR.((IT.NE.0).AND.(MOD(IT,LCOLPR).EQ.0))          SUTRA........59600
      1         .OR.(ITREL.EQ.1)).AND.(K6.NE.-1))                         SUTRA........59700
       IF (PRNK6) CALL OUTELE(VMAG,VANG1,VANG2,IN,X,Y,Z,TITLE1,TITLE2,    SUTRA........59800
-     1   BCSFL,BCSTR)                                                    SUTRA........59900
+     1   BCSFL,BCSTR,REK)
+C     1   BCSFL,BCSTR)                                                    SUTRA........59900
 C.....PRINT RESULTS TO BOUNDARY CONDITION OUTPUT FILES.                  SUTRA........60000
       PRNBCF = ((PRNALL.OR.((IT.NE.0).AND.(MOD(IT,NBCFPR).EQ.0))         SUTRA........60100
      1          .OR.((ITREL.EQ.1).AND.(NBCFPR.GT.0))).AND.(K10.NE.-1))   SUTRA........60200
