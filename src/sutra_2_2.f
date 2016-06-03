@@ -8709,12 +8709,12 @@ C.....VELOCITY HEADER INFORMATION REPEATED BEFORE EACH TIME STEP         OUTELE.
       PRINTE = (J6COL(1).EQ.1)                                           OUTELE.......21800
       IF (PRINTE) THEN                                                   OUTELE.......21900
          WRITE(K6,982) (COLTK6(J6COL(M)), M=1,NCOLS6)                    OUTELE.......22000
-  982    FORMAT ("## ", A8, 19(A15),"     REK")
+  982    FORMAT ("## ", A8, 4(A15),"     REK")
 C  982    FORMAT ("## ", A8, 19(A15))                                     OUTELE.......22100
       ELSE                                                               OUTELE.......22200
          WRITE(K6,983) COLTK6(J6COL(1))(3:15),                           OUTELE.......22300
      1      (COLTK6(J6COL(M)), M=2,NCOLS6)                               OUTELE.......22400
-  983    FORMAT ("## ", A13, 19(A15),"      REK")
+  983    FORMAT ("## ", A13, 4(A15),"      REK")
 C  983    FORMAT ("## ", A13, 19(A15))                                    OUTELE.......22500
       END IF                                                             OUTELE.......22600
 C                                                                        OUTELE.......22700
@@ -8756,7 +8756,8 @@ C.....VELOCITY DATA FOR THIS TIME STEP                                   OUTELE.
 C            WRITE(K6,1985) L,(CUTSML(VCOL(M)), M=2,NCOLS6)               OUTELE.......26200
  1985       FORMAT (I9, 2X, 19(1PE15.7))                                 OUTELE.......26300
          ELSE                                                            OUTELE.......26400
-            WRITE(K6,1986) (CUTSML(VCOL(M)), M=1,NCOLS6)                 OUTELE.......26500
+            WRITE(K6,1986) (CUTSML(VCOL(M)), M=1,NCOLS6),REK(L) 
+C            WRITE(K6,1986) (CUTSML(VCOL(M)), M=1,NCOLS6)                 OUTELE.......26500
  1986       FORMAT (1X, 20(1PE15.7))                                     OUTELE.......26600
          END IF                                                          OUTELE.......26700
  5000 CONTINUE                                                           OUTELE.......26800
