@@ -11,6 +11,7 @@
         end
         temp=str2double(ln(i,4));
         slab(1:2,1:temp,i)=fscanf(fn, '%g %g', [2 temp]);
+        slab(2,slab(2,:,i)==0,i)=nan;
     end
 % concentration
     for i=1:3
@@ -19,6 +20,7 @@
         end
         temp=str2double(ln2(i,4));
         clab(1:2,1:temp,i)=fscanf(fn, '%g %g', [2 temp]);
+        clab(2,clab(2,:,i)==0,i)=nan;
     end
 % surface evaporation
     for i=1:5
