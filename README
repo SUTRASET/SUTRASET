@@ -1,11 +1,46 @@
-extended sutra considering evaporation, salt precipitation, seepage and tidal forces
+SUTRASET is extended USGS SUTRA code considering seepage(S), evaporation(E) and tidal forces(T)
+
+The pecific processes that the code considers on top of SUTRA are:
+
+  1. the reduction of evaporation induced by water desaturation on the surface
+  2. the reduction of evaporation due to increase to solute concentration
+  3. the reduction of evaporation due to salt precipitation on the surface as crust
+  4. the removal of residual liquid water due to evaporation (by extending SWCC and Kr function below residual liquid water saturation)
+  5. evaporation taking water away with salt remain in the soils
+  6. a dynamic soil surface boundary conditions with three phases (1. Hydrostatic pressure boundary for water submerged surfaces, 2. Seepage for saturated soil surface above water level, 3 evaporation for unsaturated soil surface above water level). These three phases are determined using non-linear iterations to avoid phase lag (water spraying truck effect!).
+
+Vapour flow is not considered in SUTRASET
+
+  
+Examples:
+the result of a 1-D calibration case considering evaporation from a soil column with a saline water table at the bottom:
+
+https://www.youtube.com/watch?v=Ny3e0dCjsOM 
+
+the case is available at examples/Fujimaki/MassarLoamy and /examples/Fujimaki/Toyoura
+
+
+The mathematical explanation is given in the paper:
+Shen, C., Zhang, C., Xin, P., Kong, J., & Li, L. (2018). Salt Dynamics in Coastal Marshes: Formation of Hypersaline Zones. Water Resources Research, 1–18. https://doi.org/10.1029/2017WR022021
 
 
 
+The result of a 2-D case considering tide, evaporation in coastal wetland
+https://www.youtube.com/watch?v=y01Bo0dyTFE
+the case is available at examples/evaporation_salt_marsh/sandyloam_evt4
 
 
+How to use the code:
 
+under UNIX environment where gfortran is available.
+issue the following command
 
+git clone https://github.com/chenmingzhang/sutraset
+cd sutraset/src
+make 
+make all
+
+you will have sutraset_gf compiled in the src folder
 
 
 
@@ -32,6 +67,6 @@ can properly approximate solid2000, but the curve is too steep at the end so
 artifitial evaporation spike may occur
 
 4. When applied evaporation rate is above 8mm/day, artificial 
-recharge could occur in which a recharge moves all the way up to the supratidal zone. 
+recharge could occur when tide retrieve in which a recharge moves all the way up to the supratidal zone. 
 The way of preventing such recharge is to ensure nonlinear iteration is enabled.
 
