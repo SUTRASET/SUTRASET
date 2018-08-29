@@ -42,6 +42,13 @@ make all
 
 you will have sutraset_gf compiled in the src folder
 
+under windows environment after downloading the package, creat a file called gversion.f90 with following content
+
+SUBROUTINE GVERSION (K3)
+  WRITE (K3,*) "this is not git controlled "
+      RETURN
+END SUBROUTINE
+
 
 
 GENERAL NOTICE
