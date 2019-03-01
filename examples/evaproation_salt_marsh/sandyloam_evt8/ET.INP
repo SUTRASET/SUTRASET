@@ -63,7 +63,7 @@
 #            IS ALWAYS ON
 #     ITE... TEMPERATORYLY NOT USING, IT WAS DESIGNED FOR THE NUMBER OF TIME CALL FOR BCTIME
 ##         [QET]         [UET]          [PET]          [UVM]   [NIGHT]     [ITE]
-         4.6296D-8       1.D-4       -200.D+00      0.264D0         0        0
+         4.6296D-8       1.D-4       -200.D+00      0.05D0         0        0
 ##  DATASET 13E: EVAPORATION PARAMETER
 ##    TMA  -- (A)TMOSPHERIC (T)EMPERATURE ON THE TOP OF THE COLUMN [CELSIUS]                   IT IS USEFULL WHEN MET=2
 ##    TMI  -- (I)NITIAL SOIL TEMPERATURE [CELSIUS]                    IT IS USEFULL WHEN MET=2
