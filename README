@@ -1,4 +1,4 @@
-SUTRASET is extended USGS SUTRA code considering seepage(S), evaporation(E) and tidal forces(T)
+#SUTRASET is extended USGS SUTRA code considering seepage(S), evaporation(E) and tidal forces(T)
 
 The pecific processes that the code considers on top of SUTRA are:
 
@@ -29,31 +29,38 @@ https://www.youtube.com/watch?v=y01Bo0dyTFE
 the case is available at examples/evaporation_salt_marsh/sandyloam_evt4
 
 
-How to use the code:
+#How to use the code:
 
-1. under UNIX environment where gfortran,git is available.
+##1. under UNIX environment where gfortran, git are available.
 
 issue the following command
 
+```bash
 git clone https://github.com/chenmingzhang/sutraset
 cd sutraset/src
 make 
 make all
+```
 
 you will have sutraset_gf compiled in the src folder
 
-2. under WINDOWS environment, just use sutraset_gf_windows.exe in the directory bin
+##2. under WINDOWS environment, just use precompiled **sutraset_gf_windows.exe** in the directory */bin*
 
-3. under windows environment, with minGW avaialble
- after downloading the package, creat a file in folder src called gversion.f90 with following content
+##3. under WINDOWS environment, with minGW avaialble
 
+ after downloading the package in zip file, creat a file in folder */src* called *gversion.f90* with following content
+
+```fortran
 SUBROUTINE GVERSION (K3)
   WRITE (K3,*) "this is not git controlled "
       RETURN
 END SUBROUTINE
+```
 
 Then issue the command below in the folder src (with mingw) 
 
+```bash
 gfortran *.f90 *.f -O3 -o sutraset_gf_mingw.exe
+```
 
 
