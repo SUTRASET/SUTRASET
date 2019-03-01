@@ -2,14 +2,14 @@ SUTRASET is extended USGS SUTRA code considering seepage(S), evaporation(E) and 
 
 The pecific processes that the code considers on top of SUTRA are:
 
-  1. the reduction of evaporation induced by water desaturation on the surface
-  2. the reduction of evaporation due to increase to solute concentration
-  3. the reduction of evaporation due to salt precipitation on the surface as crust
-  4. the removal of residual liquid water due to evaporation (by extending SWCC and Kr function below residual liquid water saturation)
-  5. evaporation taking water away with salt remain in the soils
+  1. evaporation takes water away with salt remain in the soils
+  2. the reduction of evaporation due to water desaturation on the surface, by considering surface resistance.
+  3. the reduction of evaporation due to increase to solute concentration on the surface, according to Kelvin Equation.
+  4. the reduction of evaporation due to salt precipitation on the surface as crust, by considering salt resistance
+  5. the removal of residual liquid water due to evaporation (by extending SWCC and Kr function below residual liquid water saturation level)
   6. a dynamic soil surface boundary conditions with three phases (1. Hydrostatic pressure boundary for water submerged surfaces, 2. Seepage for saturated soil surface above water level, 3 evaporation for unsaturated soil surface above water level). These three phases are determined using non-linear iterations to avoid phase lag (water spraying truck effect!).
 
-Vapour flow is not considered in SUTRASET
+Vapor flow in porous media is not considered in SUTRASET
 
   
 Examples:
@@ -24,7 +24,6 @@ The mathematical explanation is given in the paper:
 Shen, C., Zhang, C., Xin, P., Kong, J., & Li, L. (2018). Salt Dynamics in Coastal Marshes: Formation of Hypersaline Zones. Water Resources Research, 1–18. https://doi.org/10.1029/2017WR022021
 
 
-
 The result of a 2-D case considering tide, evaporation in coastal wetland
 https://www.youtube.com/watch?v=y01Bo0dyTFE
 the case is available at examples/evaporation_salt_marsh/sandyloam_evt4
@@ -32,7 +31,8 @@ the case is available at examples/evaporation_salt_marsh/sandyloam_evt4
 
 How to use the code:
 
-under UNIX environment where gfortran is available.
+1. under UNIX environment where gfortran,git is available.
+
 issue the following command
 
 git clone https://github.com/chenmingzhang/sutraset
@@ -42,38 +42,18 @@ make all
 
 you will have sutraset_gf compiled in the src folder
 
-under windows environment after downloading the package, creat a file called gversion.f90 with following content
+2. under WINDOWS environment, just use sutraset_gf_windows.exe in the directory bin
+
+3. under windows environment, with minGW avaialble
+ after downloading the package, creat a file in folder src called gversion.f90 with following content
 
 SUBROUTINE GVERSION (K3)
   WRITE (K3,*) "this is not git controlled "
       RETURN
 END SUBROUTINE
 
+Then issue the command below in the folder src (with mingw) 
 
+gfortran *.f90 *.f -O3 -o sutraset_gf_mingw.exe
 
-GENERAL NOTICE
-1. it is noticed that choosing a normal compressbility for matrix and
-liquid would cause error, if liquid water saturation is low. this is 
-because liquid water pressure can reduced down to 1e-11 pa, if this 
-pressure multiplies a storativity 1e-4. There is large amount
-of water in unsaturated zone.
-
-2. There is a issue on bcop output. specifically, terms associated with
-pressure are calulated based on current time step i.e., qin=gnup(pbs-pvec), which terms
-associated with concentration are calculated based on the previous time step. i.e., 
-qinc=gnup(bps-piter). This may cause non-consistency at one step when pbc is experiencing
-significant change. also this is the reason why solute mass balance in fort.21 is not 
-correct. (but water mass is excellent!)
-
-3. a set of parameters that can properly simulate salt precipitation
-'FREUNDLICH' 1.D-47 0.05
-it is been tested for simulation over 120 days using Peva. as 15mm/day
-it is found that 
-'FREUNDLICH' 2.D-45 0.05 
-can properly approximate solid2000, but the curve is too steep at the end so 
-artifitial evaporation spike may occur
-
-4. When applied evaporation rate is above 8mm/day, artificial 
-recharge could occur when tide retrieve in which a recharge moves all the way up to the supratidal zone. 
-The way of preventing such recharge is to ensure nonlinear iteration is enabled.
 
