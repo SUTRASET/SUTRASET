@@ -1,4 +1,4 @@
-#SUTRASET is extended USGS SUTRA code considering seepage(S), evaporation(E) and tidal forces(T)
+# SUTRASET is extended USGS SUTRA code considering seepage(S), evaporation(E) and tidal forces(T)
 
 The pecific processes that the code considers on top of SUTRA are:
 
@@ -29,9 +29,9 @@ https://www.youtube.com/watch?v=y01Bo0dyTFE
 the case is available at examples/evaporation_salt_marsh/sandyloam_evt4
 
 
-#How to use the code:
+## How to use the code:
 
-##1. under UNIX environment where gfortran, git are available.
+#### 1. under UNIX environment where gfortran, git are available.
 
 issue the following command
 
@@ -44,9 +44,24 @@ make all
 
 you will have sutraset_gf compiled in the src folder
 
-##2. under WINDOWS environment, just use precompiled **sutraset_gf_windows.exe** in the directory */bin*
+#### 2. if you just wish to run precompiled SUTRASET in WINDOWS environment:
 
-##3. under WINDOWS environment, with minGW avaialble
+SUTRASET has been precompiled as **sutraset_gf_windows.exe** in the directory *bin*. The associated **dlls** are also included in **bin** folder. This exe file has a alias (or shortcut) in folder *bin* named *sutraset.bat* that can be copied to any of your simulation folders.
+(We do not suggest copying the exe (sutraset_gf_windows.exe) and associated dlls file into the simulation directories for running SUTRASET.)
+
+To allow *sutraset.bat* to be copied and executed in any of your simulation folders, you will need to add the absolute address of directory *bin* into the system environment variables.
+
+For example: 
+
+If **sutraset** is located in *d:\sutraset*, the aboslute address of directory *bin* is *d:\sutraset\bin*. you will need to add *d:\sutraset\bin* in to your system environment variable.
+
+The way to add path into system enviroment variables can be found from here:
+
+https://superuser.com/questions/949560/how-do-i-set-system-environment-variables-in-windows-10
+
+After this, you will be able to copy *sutraset.bat* into any of your simulation folders and run the simulation by double clicking the file.
+
+#### 3. if you wish to compile SUTRAET in WINDOWS, with minGW avaialble:
 
  after downloading the package in zip file, creat a file in folder */src* called *gversion.f90* with following content
 
@@ -60,7 +75,8 @@ END SUBROUTINE
 Then issue the command below in the folder src (with mingw) 
 
 ```bash
-gfortran *.f90 *.f -O3 -o sutraset_gf_mingw.exe
+gfortran *.f90 *.f -O3 -o sutraset_gf_windows.exe
+
 ```
 
 
