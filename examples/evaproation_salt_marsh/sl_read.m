@@ -6,6 +6,7 @@ fil=readFIL();
 
 ET=etObj('ET');
 inp  = inpObj(fil.basename);
+% inp  = inpObj(fil.basename,'block_reading','yes'); % this may be faster if inp file is too slow to parse
 inp.get_x_nod_mtx;
 inp.get_y_nod_mtx;
 inp.get_dx_cell_mtx;

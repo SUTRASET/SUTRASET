@@ -1,3 +1,17 @@
+# how to run the code
+
+### 1. run the simulation (may take one day to complete) .
+### 2. go to the simulation directory, issue the command in MATLAB:
+
+```matlab
+addpath ..
+```
+
+by doing this, the parent folder with all the post-processing m files are included in the enviromental variables.
+
+### 3. run read_analysis.m
+
+
 GENERAL NOTICE
 1. it is noticed that choosing a normal compressbility for matrix and
 liquid would cause error, if liquid water saturation is low. this is 
