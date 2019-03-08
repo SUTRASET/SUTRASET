@@ -1,22 +1,25 @@
-clear
+clear % clear all the previous simulation result so 
 
-fil=readFIL();
+fil=readFIL();  % read SUTRA.FIL to find all the filenames
 %basename=fil.filename(2:end-5);
 
 
-ET=etObj('ET');
-inp  = inpObj(fil.basename);
+ET=etObj('ET'); % read ET.inp file
+inp  = inpObj(fil.basename); %read inp file
 % inp  = inpObj(fil.basename,'block_reading','yes'); % this may be faster if inp file is too slow to parse
-inp.get_x_nod_mtx;
+inp.get_x_nod_mtx; % this creates a inp.x_nod_mtx, which is x coordinates in matrix form
 inp.get_y_nod_mtx;
 inp.get_dx_cell_mtx;
 inp.get_dy_cell_mtx;
-nod  = readNOD(fil.basename);
+nod  = readNOD(fil.basename); %read nod file
 ele  = readELE(fil.basename);
 bcof = readBCOF(fil.basename);
 bcop = readBCOP(fil.basename);
 
-
+% find which column in NOD file is for sm 
+% sm solid salt precipitated on the soil surface (kg)
+% smass solute mass in each cell (kg)
+% water mass in each cell (kg)
 sm_idx    = find(strcmp(nod(1).label,'SM'));
 smass_idx = find(strcmp(nod(1).label,'SMASS'));
 wmass_idx = find(strcmp(nod(1).label,'WMASS'));
