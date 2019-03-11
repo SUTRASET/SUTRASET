@@ -151,7 +151,25 @@ C         THIS IS NEWLY FOUND EQUATION THAT STRICTLY FOLLOW SALT CURVE
 C         2016-02-12 IN THIS CASE THERE WILL BE NO SM BECOMING NEGATIVE
 C         IF C IS NEGATIVE
           SM(I)=EPRSV*SL(I)*UVEC(I)
-
+C  TO190311 BELOW IS THE REFRENCE IN SUBROUTINE ADSORB TO CALCULATE
+C  ADSPORTION
+CC.....FREUNDLICH SORPTION MODEL                                          ADSORB........4200
+C  700 IF(ADSMOD.NE.'FREUNDLICH') GOTO 950                                ADSORB........4300
+C      CHCH=CHI1/CHI2                                                     ADSORB........4400
+C      DCHI2=1.D0/CHI2                                                    ADSORB........4500
+C      RH2=RHOW0**DCHI2                                                   ADSORB........4600
+C      CHI2F=((1.D0-CHI2)/CHI2)                                           ADSORB........4700
+C      DO 750 I=1,NN                                                      ADSORB........4800
+C      IF(U(I)) 720,720,730                                               ADSORB........4900
+C  720 UCH=1.0D0                                                          ADSORB........5000
+C      GOTO 740                                                           ADSORB........5100
+C  730 UCH=U(I)**CHI2F                                                    ADSORB........5200
+C  740 RU=RH2*UCH                                                         ADSORB........5300
+C      CS1(I)=CHCH*RU                                                     ADSORB........5400
+C      CS2(I)=0.D0                                                        ADSORB........5500
+C      CS3(I)=0.D0                                                        ADSORB........5600
+C      SL(I)=CHI1*RU                                                      ADSORB........5700
+C      SR(I)=0.D0                                                         ADSORB........5800
 
 C          IF (UVEC(I).LE.UVM)THEN
 C            SM(I)=0.0

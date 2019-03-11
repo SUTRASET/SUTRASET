@@ -17,6 +17,8 @@ Sandy-loam, 2015-04-02, trial simulation_1
 'TIME_STEPS' 'TIME CYCLE'     'ELAPSED'       240         9064150         0         1.e+99       1.      9999       1.      1.e-20       1.e+99 
 '-'
 # Data Set 7A
+# NOTICE FOR SUTRASET: IF TIDE IS INCORPORATED ALONG WITH EVAPORATION, NON-LINEAR ITERATION MUST BE
+# ENABLED TO AVLID "WATER SPRAYING TRUCK" ISSUES
 #1000 1.0E3 1.0E0
 #1000 5.0E3 1.0E0
 5000 8.0E3 1.0E-1
@@ -5353,6 +5355,9 @@ Sandy-loam, 2015-04-02, trial simulation_1
 2600 2     1.255e-12 1.255e-12 0. 2. 2. 0.2 0.2 'Data Set 15B' 
 #Start_inp17
 # DATASET 17
+# NOTE: SUTRASET WILL READ THE TWO VALUES AFTER -NODE NUMBER. 
+# THE FIRST VALUE IS THE LENGTH OF THE CELL (DX IN THIS EXAMPLE)
+# THE SECOND VALUE IS THE DEPTH OF THE CELL (DY IN THIS EXAMPLE)
 -1      1.D0    0.065
 -2      2.D0    0.064
 -3      2.D0    0.063
@@ -5397,47 +5402,47 @@ Sandy-loam, 2015-04-02, trial simulation_1
 0 'data Set 17' 
 #Start_inp18
 #Start_inp19
--1 1. 0.035 ' Data Set 19 0' 
--2 1. 0.035 ' Data Set 19 0' 
--3 1. 0.035 ' Data Set 19 0' 
--4 1. 0.035 ' Data Set 19 0' 
--5 1. 0.035 ' Data Set 19 0' 
--6 1. 0.035 ' Data Set 19 0' 
--7 1. 0.035 ' Data Set 19 0' 
--8 1. 0.035 ' Data Set 19 0' 
--9 1. 0.035 ' Data Set 19 0' 
--10 1. 0.035 ' Data Set 19 0' 
--11 1. 0.035 ' Data Set 19 0' 
--12 1. 0.035 ' Data Set 19 0' 
--13 1. 0.035 ' Data Set 19 0' 
--14 1. 0.035 ' Data Set 19 0' 
--15 1. 0.035 ' Data Set 19 0' 
--16 1. 0.035 ' Data Set 19 0' 
--17 1. 0.035 ' Data Set 19 0' 
--18 1. 0.035 ' Data Set 19 0' 
--19 1. 0.035 ' Data Set 19 0' 
--20 1. 0.035 ' Data Set 19 0' 
--21 1. 0.035 ' Data Set 19 0' 
--22 1. 0.035 ' Data Set 19 0' 
--23 1. 0.035 ' Data Set 19 0' 
--24 1. 0.035 ' Data Set 19 0' 
--25 1. 0.035 ' Data Set 19 0' 
--26 1. 0.035 ' Data Set 19 0' 
--27 1. 0.035 ' Data Set 19 0' 
--28 1. 0.035 ' Data Set 19 0' 
--29 1. 0.035 ' Data Set 19 0' 
--30 1. 0.035 ' Data Set 19 0' 
--31 1. 0.035 ' Data Set 19 0' 
--32 1. 0.035 ' Data Set 19 0' 
--33 1. 0.035 ' Data Set 19 0' 
--34 1. 0.035 ' Data Set 19 0' 
--35 1. 0.035 ' Data Set 19 0' 
--36 1. 0.035 ' Data Set 19 0' 
--37 1. 0.035 ' Data Set 19 0' 
--38 1. 0.035 ' Data Set 19 0' 
--39 1. 0.035 ' Data Set 19 0' 
--40 1. 0.035 ' Data Set 19 0' 
--41 1. 0.035 ' Data Set 19 0' 
+-1 ' Data Set 19 0' 
+-2 ' Data Set 19 0' 
+-3 ' Data Set 19 0' 
+-4 ' Data Set 19 0' 
+-5 ' Data Set 19 0' 
+-6 ' Data Set 19 0' 
+-7 ' Data Set 19 0' 
+-8 ' Data Set 19 0' 
+-9 ' Data Set 19 0' 
+-10 ' Data Set 19 0' 
+-11 ' Data Set 19 0' 
+-12 ' Data Set 19 0' 
+-13 ' Data Set 19 0' 
+-14 ' Data Set 19 0' 
+-15 ' Data Set 19 0' 
+-16 ' Data Set 19 0' 
+-17 ' Data Set 19 0' 
+-18 ' Data Set 19 0' 
+-19 ' Data Set 19 0' 
+-20 ' Data Set 19 0' 
+-21 ' Data Set 19 0' 
+-22 ' Data Set 19 0' 
+-23 ' Data Set 19 0' 
+-24 ' Data Set 19 0' 
+-25 ' Data Set 19 0' 
+-26 ' Data Set 19 0' 
+-27 ' Data Set 19 0' 
+-28 ' Data Set 19 0' 
+-29 ' Data Set 19 0' 
+-30 ' Data Set 19 0' 
+-31 ' Data Set 19 0' 
+-32 ' Data Set 19 0' 
+-33 ' Data Set 19 0' 
+-34 ' Data Set 19 0' 
+-35 ' Data Set 19 0' 
+-36 ' Data Set 19 0' 
+-37 ' Data Set 19 0' 
+-38 ' Data Set 19 0' 
+-39 ' Data Set 19 0' 
+-40 ' Data Set 19 0' 
+-41 ' Data Set 19 0' 
 0 'Data Set 19' 
 #
 #Start_inp20

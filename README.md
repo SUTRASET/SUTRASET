@@ -79,4 +79,7 @@ gfortran *.f90 *.f -O3 -o sutraset_gf_windows.exe
 
 ```
 
-
+## Input requirements:
+ SUTRASET considers evaporation as a sink term. The node numbers needs to be listed DATASET 17. As the change of evaporation rate due to surface saturation, concentration and solid salt depth is implimeted in subroutine BCTIME, these node number will be specified as negative values. 
+SUTRASET needs users to specify the length and the depth of the cell where evaporation is applied, after the the negative node number. please referred to example **examples/evaproation_salt_marsh/sandyloam_evt4/evapotranspiration_sandyloam.inp**
+ The soil water retention parameters, air conditions, and resistance parameters are listed in input file ET.inp. see the same example mentioned above.
