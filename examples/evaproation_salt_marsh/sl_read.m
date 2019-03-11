@@ -12,6 +12,9 @@ inp.get_y_nod_mtx;
 inp.get_dx_cell_mtx;
 inp.get_dy_cell_mtx;
 nod  = readNOD(fil.basename); %read nod file
+% one could also do:
+%[nod,nod2]  = readNOD( name,'outputnumber',3,'outputfrom',10);
+%the reading starting from the 3rd outputs and only reads up to 13th output
 ele  = readELE(fil.basename);
 bcof = readBCOF(fil.basename);
 bcop = readBCOP(fil.basename);
@@ -43,5 +46,11 @@ vx_ele_idx = strcmp(ele(1).label,'X velocity');
 vy_ele_idx = strcmp(ele(1).label,'Y velocity');
 vz_ele_idx = strcmp(ele(1).label,'Z velocity');
 
+% check how evaporation will be affected by the change of soil saturation (suction increase)
+% you may check how to use these sub commands by 
+% help plot_et_range_due_to_desaturation 
+% in command line
+ET.plot_et_range_due_to_desaturation('nreg',1)
 
+% save matlab environment in binary file
 save data.mat
