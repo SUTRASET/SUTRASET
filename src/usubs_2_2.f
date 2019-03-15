@@ -39,6 +39,8 @@ C      IMPLICIT NONE
       COMMON /CONTRL/ GNUP,GNUU,UP,DTMULT,DTMAX,ME,ISSFLO,ISSTRA,ITCYC, 
      1   NPCYC,NUCYC,NPRINT,NBCFPR,NBCSPR,NBCPPR,NBCUPR,IREAD,          
      2   ISTORE,NOUMAT,IUNSAT,KTYPE                                     
+      COMMON /PARAMS/ COMPFL,COMPMA,DRWDU,CW,CS,RHOS,SIGMAW,SIGMAS,
+     1   RHOW0,URHOW0,VISC0,PRODF1,PRODS1,PRODF0,PRODS0,CHI1,CHI2 
       DIMENSION KTYPE(2)                                                
       DOUBLE PRECISION TIDE
       REAL SEEPX,SEEPY ! The x- and y-coordinate of seepage node
@@ -259,9 +261,6 @@ C                                                                        BCTIME.
       I=IQSOP(IQP)                                                       BCTIME.......17600
       IF(I) 500,600,600                                                  BCTIME.......17700
   500 CONTINUE                                                           BCTIME.......17800
-C      IF (IT.EQ.7194.AND.IABS(I).EQ.145) THEN
-C        aabss=1.0D0
-C      ENDIF
       IF(PM1(IABS(I)).LT.PET.AND.Y(IABS(I)).GE.TIDE) THEN
       CALL EVAPORATION (AET,PM1(IABS(I)),UM1(IABS(I)),RCIT(IABS(I))
      2,POR(IABS(I)),SW(IABS(I))
@@ -270,13 +269,13 @@ C      0.004 M/DAY /3600/24  DAY/S *2M *1M * 1000 KG/M3    =[KG/S]
 C     QET (M/S) * 2 (M) *1 (M) * 1000 KG/M3 = [KG/S] 
 !            QIN(-I)=-QET*2.D0*1.D0*1.D3 
 C     AET ENDS UP WITH A NEGATIVE VALUE!!!
-            QIN(-I)=AET*SAREA(IQP)*1.D3 
+            QIN(-I)=AET*SAREA(IQP)*RHOW0
             UIN(-I)=UET
       ELSE
             QIN(-I)=0.D0
             UIN(-I)=0.D0
       END IF
-C     just wish to make one more commit
+C     JUST WISH TO MAKE ONE MORE COMMIT
 C     NOTE: A FLOW AND TRANSPORT SOLUTION MUST OCCUR FOR ANY             BCTIME.......17900
 C           TIME STEP IN WHICH QIN( ) CHANGES.                           BCTIME.......18000
 C     QIN(-I) =   ((           ))                                        BCTIME.......18100

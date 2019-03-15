@@ -83,3 +83,9 @@ gfortran *.f90 *.f -O3 -o sutraset_gf_windows.exe
  SUTRASET treats evaporation as a sink term. The node numbers needs to be listed DATASET 17. As the change of evaporation rate due to surface saturation, concentration and solid salt depth is implimeted in subroutine BCTIME, these node number will be specified as negative values. 
  Since the orginal SUTRA does not automatic calculate the effective surface area associated with the flux in source and sink term (dataset 17 ), User needs to input a volumetric inflow/outflow (m3/s) by multipling the in/out flux (m/s) with the injecting area (m2),  Similarly, SUTRASET requires user to input the node geometry where evaporation is implimented. This is done by to specifing the length and the depth of the cell where evaporation is applied, after the the negative node number. please referred to example **examples/evaproation_salt_marsh/sandyloam_evt4/evapotranspiration_sandyloam.inp**
  The soil water retention parameters, air conditions, and resistance parameters are listed in input file ET.inp. see the same example mentioned above.
+
+
+## Rule of Thumb to help converge your solution:
+1. If negative concentration is present, particularly below the cell where evaporation is implimented, try to reduce the diffussivity, or refine the mesh. as evaporation may lift the salinity up to solubility limit (~265 PPT for NaCl), generating large concentration gradient near the surface. This could be relifed by quickly diffuse the hypersaline water through diffusion, or add more cells to describe the details
+
+2. non-linear iteration must be enabled, when seepage is considered.
