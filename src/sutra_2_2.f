@@ -13123,9 +13123,9 @@ C                                                                        SUTRA..
 C.....SET TIME-DEPENDENT BOUNDARY CONDITIONS, SOURCES AND SINKS          SUTRA........43300
 C        FOR THIS TIME STEP                                              SUTRA........43400
       IF (ITER.EQ.1.AND.IBCT.NE.4)                                       SUTRA........43500
-     1   CALL BCTIME(IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,         SUTRA........43600
+     1   CALL BCTIME (IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,         SUTRA........43600
      2   IPBCT,IUBCT,IQSOPT,IQSOUT,X,Y,Z,IBCPBC,IBCUBC,IBCSOP,IBCSOU,
-     3   PM1,UM1,CJGNUP,CJGNUU,RCIT,SW,POR,NREG,YY,SAREA,SM)
+     3   PM1,UM1,CJGNUP,CJGNUU,RCIT,SW,POR,NREG,YY,SAREA,SM,VOL)
 C     3   PITER,CJGNUP)  ! Chengji 2015-03-31
       IF ((ITER.EQ.1).AND.(K9.NE.-1))                                    SUTRA........43800
      1   CALL BCSTEP(SETBCS,IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,  SUTRA........43900

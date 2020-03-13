@@ -170,6 +170,24 @@ C      CS2(I)=0.D0                                                        ADSORB
 C      CS3(I)=0.D0                                                        ADSORB........5600
 C      SL(I)=CHI1*RU                                                      ADSORB........5700
 C      SR(I)=0.D0                                                         ADSORB........5800
+C          EPRSV=(1.D0-POR(I))*RHOS*VOL(I)
+C   TO200313
+C      SM(I)=EPRSV*SL(I)*UVEC(I)         
+C      SM(I)=EPRSV*CHI1*RU*UVEC(I)                                  # 5700
+C      SM(I)=EPRSV*CHI1*RH2*UCH*UVEC(I)                             # 5300
+C      SM(I)=EPRSV*CHI1*RHOW0**DCHI2*UCH*UVEC(I)                    # 4600
+C      SM(I)=EPRSV*CHI1*RHOW0**(  1.D0/CHI2  )*UCH*UVEC(I)          # 4500
+C      SM(I)=EPRSV*CHI1*RHOW0**(  1.D0/CHI2  )*U(I)**CHI2F*UVEC(I)  # 5200
+C      SM(I)=EPRSV*CHI1*RHOW0**(  1.D0/CHI2  )*U(I)**((1.D0-CHI2)/CHI2)*UVEC(I) # 4700
+C      SM(I)=  (1.D0-POR(I))*RHOS*VOL(I) *CHI1*RHOW0**(  1.D0/CHI2  )*U(I)**((1.D0-CHI2)/CHI2)*UVEC(I)   # EPRSV
+C      SIMPLE VERSION:
+C      SM(I)= (1.D0-POR(I))*RHOS*VOL(I)   *CHI1 * RHOW0**(1.D0/CHI2)*U(I)**((1.D0-CHI2)/CHI2)*UVEC(I)
+C      FROM EQUATION 2.35a in SUTRA MANUAL
+C        CS=CHI1* (RHOW0*C)**(1/CHI2)
+C      SO SM ESSENTIALLY IS  SM(I)= RHOS*VOL(I)*CS
+C        SO in paper C_Solid=a C**b and 
+C                    a = (1-POR(I))* CHI1* RHOW0**(1/CHI2)
+C                    b =  1/CHI2
 
 C          IF (UVEC(I).LE.UVM)THEN
 C            SM(I)=0.0
@@ -293,11 +311,11 @@ C *** RSC--SALT RESISTANCE
 C     MSC -- SALT RESISTANCE SWICH =0 OFF =1 FUJIMAKI(2006)
 C     UM  -- THE SOLUBILITY [-]
 C     C   -- SOLUTE CONCENTRATION [-]
-C     DS  -- MASS OF SOLID SALT PER UNIT AREA[KG/M3]
+C     DS  -- MASS OF SOLID SALT PER UNIT AREA[KG/M2]  TO200313
 C     TO190302
-C     TWO CONVERSION: DS*1.D2 CONVERTS THE UNIT FROM KG/M2 TO MG/M2
-C     THE LAST CONVRSION IS TO CONVERT CM TO M AS FUJIMAKI PAPER USES CM
-C     AS UNIT.
+C     UNIT CONVERSION: DS*1.D2 CONVERTS THE UNIT FROM KG/M2 TO MG/CM2
+C     AS FUJIMAKI PAPER USES MG/CM2 AS UNIT.
+C     SEE DEFINATION ONE LINE ABOVE EQ26 in FUJIMAKI 2006
 C      IF ((C.LE.UM).OR.(MSC.LE.0))  THEN
       IF (MSC.LE.0)  THEN
         SALTRSIS = 0.D0
