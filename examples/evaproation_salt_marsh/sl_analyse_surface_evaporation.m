@@ -13,7 +13,7 @@
 %  pumping effect
 
 clear all
-close all
+%close all
 % project name
 name='PART6';
 
@@ -32,7 +32,7 @@ top_section_area_mtx_m2=inp.dx_cell_mtx.* inp.z(1) ; % z is the width of the cel
 volume_mtx_m3=-inp.dx_cell_mtx.* inp.z(1).*inp.dy_cell_mtx;
 ET=etObj('ET');
 %only parsing output 10-13
-%nod  = readNOD( name,'outputnumber',3,'outputfrom',50);
+nod  = readNOD( name,'outputnumber',3,'outputfrom',50);
 p_idx  = strcmp(nod(1).label,'Pressure');
 c_idx  = strcmp(nod(1).label,'Concentration');
 s_idx  = strcmp(nod(1).label,'Saturation');
@@ -76,6 +76,8 @@ relative_humidity_soil= ...
     func.rh_matric(matric_potential_surface_sutra, ET.tmi+constants.kelvin) .* ...
     func.rh_osmotic(concentration_surface_sutra);
 
+%relative_humidity_soil= ...
+%    func.rh_matric(matric_potential_surface_sutra, ET.tmi+constants.kelvin);
 
 
 %inp.chi1
@@ -108,7 +110,8 @@ solid_salt_thickness_surface_m= salt_weight_per_area_kgPm2/constants.density_sol
 vapour_density_deficit_surface_kgPm3= func.sat_vapor_density_kgPm3(ET.tmi+constants.kelvin)*relative_humidity_soil - ...
     func.sat_vapor_density_kgPm3(ET.tma+constants.kelvin)*ET.rh;
 
-total_resistances_surface_sPm=ET.ravt+surface_resistance_sPm+surface_resistance_sPm+salt_resistance_sPm;
+total_resistances_surface_sPm=ET.ravt+surface_resistance_sPm+surface_resistance_sPm +salt_resistance_sPm;
+%total_resistances_surface_sPm=ET.ravt+surface_resistance_sPm+surface_resistance_sPm;% +salt_resistance_sPm;
 
 actual_evaporation_mPs=vapour_density_deficit_surface_kgPm3/constants.rhow_pure_water./total_resistances_surface_sPm;
 

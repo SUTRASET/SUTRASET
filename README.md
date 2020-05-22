@@ -1,6 +1,6 @@
 # SUTRASET is extended USGS SUTRA code considering seepage(S), evaporation(E) and tidal forces(T)
 
-The pecific processes that the code considers on top of SUTRA are:
+The specific processes that the code considers on top of SUTRA are:
 
   1. evaporation takes water away with salt remain in the soils
   2. the reduction of evaporation due to water desaturation on the surface, by considering surface resistance.
@@ -15,9 +15,9 @@ Vapor flow in porous media is not considered in SUTRASET
 Examples:
 the result of a 1-D calibration case considering evaporation from a soil column with a saline water table at the bottom:
 
-https://www.youtube.com/watch?v=Ny3e0dCjsOM 
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/Ny3e0dCjsOM/0.jpg)](https://www.youtube.com/watch?v=Ny3e0dCjsOM)
 
-the case is available at examples/Fujimaki/MassarLoamy and /examples/Fujimaki/Toyoura
+The case is available at examples/Fujimaki/MassarLoamy and /examples/Fujimaki/Toyoura
 
 
 The mathematical explanation is given in the paper:
@@ -25,15 +25,17 @@ Shen, C., Zhang, C., Xin, P., Kong, J., & Li, L. (2018). Salt Dynamics in Coasta
 
 
 The result of a 2-D case considering tide, evaporation in coastal wetland
-https://www.youtube.com/watch?v=y01Bo0dyTFE
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/y01Bo0dyTFE/0.jpg)](https://www.youtube.com/watch?v=y01Bo0dyTFE)
+
 the case is available at examples/evaporation_salt_marsh/sandyloam_evt4
 
 
 ## How to use the code:
 
-#### 1. under UNIX environment where gfortran, git are available.
+#### 1. Under UNIX environment where gfortran, git are available.
 
-issue the following command
+Issue the following command
 
 ```bash
 git clone https://github.com/chenmingzhang/sutraset
@@ -42,28 +44,28 @@ make
 make all
 ```
 
-you will have sutraset_gf compiled in the src folder
+You will have sutraset_gf compiled in the src folder
 
-#### 2. if you just wish to run precompiled SUTRASET in WINDOWS environment:
+#### 2. If you just wish to run pre-compiled SUTRASET in WINDOWS environment:
 
-SUTRASET has been precompiled as **sutraset_gf_windows.exe** in the directory *bin*. The associated **dlls** are also included in **bin** folder. This exe file has a alias (or shortcut) in folder *bin* named *sutraset.bat* that can be copied to any of your simulation folders.
+SUTRASET has been pre-compiled as **sutraset_gf_windows.exe** in the directory *bin*. The associated **dlls** are also included in **bin** folder. This exe file has a alias (or shortcut) in folder *bin* named *sutraset.bat* that can be copied to any of your simulation folders.
 (We do not suggest copying the exe (sutraset_gf_windows.exe) and associated dlls file into the simulation directories for running SUTRASET.)
 
 To allow *sutraset.bat* to be copied and executed in any of your simulation folders, you will need to add the absolute address of directory *bin* into the system environment variables.
 
 For example: 
 
-If **sutraset** is located in *d:\sutraset*, the aboslute address of directory *bin* is *d:\sutraset\bin*. you will need to add *d:\sutraset\bin* in to your system environment variable.
+If **sutraset** is located in *d:\sutraset*, the absolute address of directory *bin* is *d:\sutraset\bin*. You will need to add *d:\sutraset\bin* in to your system environment variable.
 
-The way to add path into system enviroment variables can be found from here:
+The way to add path into system environment variables can be found from here:
 
 https://superuser.com/questions/949560/how-do-i-set-system-environment-variables-in-windows-10
 
 After this, you will be able to copy *sutraset.bat* into any of your simulation folders and run the simulation by double clicking the file.
 
-#### 3. if you wish to compile SUTRAET in WINDOWS, with minGW avaialble:
+#### 3. If you wish to compile SUTRAET in WINDOWS, with minGW available:
 
- after downloading the package in zip file, creat a file in folder */src* called *gversion.f90* with following content
+ After downloading the package in zip file, create a file in folder */src* called *gversion.f90* with following content
 
 ```fortran
 SUBROUTINE GVERSION (K3)
@@ -80,13 +82,13 @@ gfortran *.f90 *.f -O3 -o sutraset_gf_windows.exe
 ```
 
 ## Input requirements:
- SUTRASET treats evaporation as a sink term. The node numbers needs to be listed DATASET 17. As the change of evaporation rate due to surface saturation, concentration and solid salt depth is implimeted in subroutine BCTIME, these node number will be specified as negative values. 
- Since the orginal SUTRA does not automatic calculate the effective surface area associated with the flux in source and sink term (dataset 17), User needs to input a volumetric inflow/outflow (m3/s) by multipling the in/out flux (m/s) with the injecting area (m2),  Similarly, SUTRASET requires user to input the node geometry where evaporation is implimented. This is done by to specifing the surface area and the depth of the cell where evaporation is applied, after the the negative node number. please referred to example **examples/evaproation_salt_marsh/sandyloam_evt4/evapotranspiration_sandyloam.inp**
- The soil water retention parameters, air conditions, and resistance parameters are listed in input file ET.inp. see the same example mentioned above.
+ SUTRASET treats evaporation as a sink term. The node numbers needs to be listed DATASET 17. As the change of evaporation rate due to surface saturation, concentration and solid salt depth is implemented in subroutine BCTIME, these node number will be specified as negative values. 
+ Since the original SUTRA does not automatic calculate the effective surface area associated with the flux in source and sink term (dataset 17), User needs to input a volumetric inflow/outflow (m3/s) by multiplying the in/out flux (m/s) with the injecting area (m2),  Similarly, SUTRASET requires user to input the node geometry where evaporation is implemented. This is done by to specifying the surface area and the depth of the cell where evaporation is applied, after the negative node number. Please referred to example **examples/evaproation_salt_marsh/sandyloam_evt4/evapotranspiration_sandyloam.inp**
+ The soil water retention parameters, air conditions, and resistance parameters are listed in input file ET.inp. See the same example mentioned above.
 
 
 ## Rule of Thumb to help converge your solution:
-1. If negative solute concentration is present, particularly below the cell where evaporation is implimented, try to reduce the diffussivity, or refine the mesh. as evaporation may lift the salinity up to solubility limit (~265 PPT for NaCl), generating large concentration gradient near the surface. This could be relifed by quickly diffuse the hypersaline water through diffusion, or add more cells to describe the details
+1. If negative solute concentration is present, particularly below the cell where evaporation is implemented, try to reduce the diffusivity, or refine the mesh. As evaporation may lift the salinity up to solubility limit (~265 PPT for NaCl), generating large concentration gradient near the surface. This could be relieved by quickly diffuse the hypersaline water through diffusion, or add more cells to describe the details
 
 2. non-linear iteration must be enabled, when seepage is considered.
 
