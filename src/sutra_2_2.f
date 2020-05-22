@@ -13122,10 +13122,10 @@ C.....INITIALIZE ARRAYS WITH VALUE OF ZERO                               SUTRA..
 C                                                                        SUTRA........43200
 C.....SET TIME-DEPENDENT BOUNDARY CONDITIONS, SOURCES AND SINKS          SUTRA........43300
 C        FOR THIS TIME STEP                                              SUTRA........43400
-      IF (ITER.EQ.1.AND.IBCT.NE.4)                                       SUTRA........43500
-     1   CALL BCTIME(IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,         SUTRA........43600
-     2   IPBCT,IUBCT,IQSOPT,IQSOUT,X,Y,Z,IBCPBC,IBCUBC,IBCSOP,IBCSOU,
-     3   PM1,UM1,CJGNUP,CJGNUU,RCIT,SW,POR,NREG,YY,SAREA,SM)
+C      IF (ITER.EQ.1.AND.IBCT.NE.4)                                       SUTRA........43500
+C     1   CALL BCTIME (IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,         SUTRA........43600
+C     2   IPBCT,IUBCT,IQSOPT,IQSOUT,X,Y,Z,IBCPBC,IBCUBC,IBCSOP,IBCSOU,
+C     3   PM1,UM1,CJGNUP,CJGNUU,RCIT,SW,POR,NREG,YY,SAREA,SM,VOL)
 C     3   PITER,CJGNUP)  ! Chengji 2015-03-31
       IF ((ITER.EQ.1).AND.(K9.NE.-1))                                    SUTRA........43800
      1   CALL BCSTEP(SETBCS,IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,  SUTRA........43900
@@ -13157,6 +13157,10 @@ C..... 2D PROBLEM                                                        SUTRA..
 C     3   VMAG,VANG1,VOL,PMAT,PVEC,UMAT,UVEC,GXSI,GETA,PVEL,LREG,IA,JA)   SUTRA........46100
        END IF                                                            SUTRA........46200
       END IF                                                             SUTRA........46300
+      IF (ITER.EQ.1.AND.IBCT.NE.4)                                    
+     1   CALL BCTIME (IPBC,PBC,IUBC,UBC,QIN,UIN,QUIN,IQSOP,IQSOU,    
+     2   IPBCT,IUBCT,IQSOPT,IQSOUT,X,Y,Z,IBCPBC,IBCUBC,IBCSOP,IBCSOU,
+     3   PM1,UM1,CJGNUP,CJGNUU,RCIT,SW,POR,NREG,YY,SAREA,SM,VOL)
 C    IQSOPT=-1 WHEN SOURCE AND SINK ARE DETERMINED BY BCTIME()
 C      IF (IT.EQ.1.AND.ITER.EQ.1.AND.IQSOPT.EQ.-1) CALL 
 C     1 SINKAREA(X,Y,Z,
