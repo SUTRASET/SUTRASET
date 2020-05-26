@@ -1,10 +1,10 @@
 # SUTRASET is extended USGS SUTRA code considering seepage(S), evaporation(E) and tidal forces(T)
 
-The specific processes that the code considers on top of SUTRA are:
+The specific processes that SUTRASET considers on top of USGS SUTRA are:
 
-  1. evaporation takes water away with salt remain in the soils
-  2. the reduction of evaporation due to water desaturation on the surface, by considering surface resistance.
-  3. the reduction of evaporation due to increase to solute concentration on the surface, according to Kelvin Equation.
+  1. evaporation taking water away with salt left in the soils
+  2. the reduction of evaporation due to water desaturation on the surface, by considering surface resistance
+  3. the reduction of evaporation due to increase to solute concentration on the surface, according to Kelvin Equation
   4. the reduction of evaporation due to salt precipitation on the surface as crust, by considering salt resistance
   5. the removal of residual liquid water due to evaporation (by extending SWCC and Kr function below residual liquid water saturation level)
   6. a dynamic soil surface boundary conditions with three phases (1. Hydrostatic pressure boundary for water submerged surfaces, 2. Seepage for saturated soil surface above water level, 3 evaporation for unsaturated soil surface above water level). These three phases are determined using non-linear iterations to avoid phase lag (water spraying truck effect!).
