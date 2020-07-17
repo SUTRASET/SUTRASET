@@ -15,7 +15,9 @@ Vapor flow in porous media is not considered in SUTRASET
 Examples:
 the result of a 1-D calibration case considering evaporation from a soil column with a saline water table at the bottom:
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/Ny3e0dCjsOM/0.jpg)](https://www.youtube.com/watch?v=Ny3e0dCjsOM)
+
+![evap](https://user-images.githubusercontent.com/7712599/87753660-6e2e1080-c846-11ea-83e5-f969d592a2a5.gif)
+
 
 The case is available at examples/Fujimaki/MassarLoamy and /examples/Fujimaki/Toyoura
 
