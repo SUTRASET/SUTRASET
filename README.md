@@ -1,4 +1,4 @@
-# SUTRASET is extended USGS SUTRA code considering seepage(S), evaporation(E) and tidal forces(T)
+# SUTRASET is extended USGS SUTRA code considering seepage(S), evaporation(E) and tide(T)
 
 The specific processes that SUTRASET considers on top of USGS SUTRA are:
 
@@ -12,27 +12,37 @@ The specific processes that SUTRASET considers on top of USGS SUTRA are:
 Vapor flow in porous media is not considered in SUTRASET
 
   
-Examples:
+##  Examples:
+
+### Example 1
+
 the result of a 1-D calibration case considering evaporation from a soil column with a saline water table at the bottom:
 
 
 ![evap](https://user-images.githubusercontent.com/7712599/87753660-6e2e1080-c846-11ea-83e5-f969d592a2a5.gif)
 
-
 The case is available at examples/Fujimaki/MassarLoamy and /examples/Fujimaki/Toyoura
 
+### Example 2
+
+Salt transport in a coastal wetland considering tide, seepage and evaporation
 
 The mathematical explanation is given in the paper:
+
 Shen, C., Zhang, C., Xin, P., Kong, J., & Li, L. (2018). Salt Dynamics in Coastal Marshes: Formation of Hypersaline Zones. Water Resources Research, 1–18. https://doi.org/10.1029/2017WR022021
 
 
-The result of a 2-D case considering tide, evaporation in coastal wetland
-
-
-[![Smart metering](https://user-images.githubusercontent.com/7712599/87749608-784b1180-c83c-11ea-944c-2481b7906be9.gif "Smart metering")](https://www.youtube.com/watch?v=y01Bo0dyTFE)
+[![Smart metering](https://user-images.githubusercontent.com/7712599/87749608-784b1180-c83c-11ea-944c-2481b7906be9.gif "Smart metering")](https://www.youtube.com/watch?v=nxWAPPYKuik)
 
 the case is available at examples/evaporation_salt_marsh/sandyloam_evt4
 
+### Example 3
+
+Development of freshwater lens in an alluvial floodplain considering fresh surface water (on the left), saline groundwater (on the right) and evaporation (on the top)
+
+[![freshwaterlens](https://user-images.githubusercontent.com/7712599/88616201-dc8c9180-d0d6-11ea-8e63-00d0c57609db.gif "Smart metering")](https://www.youtube.com/watch?v=y01Bo0dyTFE)
+
+Packaged input file is downloadable from [here.](https://dspace.flinders.edu.au/xmlui/handle/2328/39313):
 
 ## How to use the code:
 
@@ -91,8 +101,9 @@ gfortran *.f90 *.f -O3 -o sutraset_gf_windows.exe
 
 
 ## Rule of Thumb to help converge your solution:
+
 1. If negative solute concentration is present, particularly below the cell where evaporation is implemented, try to reduce the diffusivity, or refine the mesh. As evaporation may lift the salinity up to solubility limit (~265 PPT for NaCl), generating large concentration gradient near the surface. This could be relieved by quickly diffuse the hypersaline water through diffusion, or add more cells to describe the details
 
 2. non-linear iteration must be enabled, when seepage is considered.
 
-3. if tide, seepage and evaporation is considered on the top surface, (Refer to example */examples/evaporation_salt_marsh* ) and simulation is crashed with P equal NaN, trying to adjust GNUP to minimise the recharge in to surface unsaturated zone. This phenomenon occurs in particular when soil has high permeability.  As evaporation may de-saturate the soil surface with a saturation level of 0.01, the corresponding pressure could be -1e7 Pa according to soil water retention curve. Once tides comes with PBC of 0 Pa, large pressure deficit ( in this case 1e7) could cause significant recharge (e.g., flow_in=GNUP\*(PBC-P)=0.01\*1e7=1e5m3/kg) and so blow the surface cell.
+3. if tide, seepage and evaporation is considered on the top surface, (Refer to example */examples/evaporation_salt_marsh* ) and simulation is crashed with P equal NaN, trying to adjust GNUP to minimise the recharge in to surface unsaturated zone. This phenomenon occurs in particular when soil has high permeability.  As evaporation may de-saturate the soil surface with a very low saturation (0.01), the corresponding pressure could be -1e7 Pa according to soil water retention curve. Once tides comes with a PBC of 0 Pa, large pressure deficit (in this case 1e7 Pa) could cause significant recharge (e.g., flow_in=GNUP\*(PBC-P)=0.01\*1e7=1e5m3/kg) and so blow the surface cell.
