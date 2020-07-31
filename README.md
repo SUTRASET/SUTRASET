@@ -1,4 +1,4 @@
-# SUTRASET is extended USGS SUTRA code considering seepage(S), evaporation(E) and tide(T)
+# SUTRASET is extended USGS SUTRA 2.2 considering seepage(S), evaporation(E) and tide(T)
 
 The specific processes that SUTRASET considers on top of USGS SUTRA are:
 
@@ -18,8 +18,8 @@ Vapor flow in porous media is not considered in SUTRASET
 
 the result of a 1-D calibration case considering evaporation from a soil column with a saline water table at the bottom:
 
+![Fujimaki_t60_ss0_scale600_fps5_r30_](https://user-images.githubusercontent.com/7712599/88990738-20270b80-d322-11ea-8b30-874414f5e1c8.gif)
 
-![evap](https://user-images.githubusercontent.com/7712599/87753660-6e2e1080-c846-11ea-83e5-f969d592a2a5.gif)
 
 The case is available at examples/Fujimaki/MassarLoamy and /examples/Fujimaki/Toyoura
 
