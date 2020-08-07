@@ -40,9 +40,13 @@ the case is available at examples/evaporation_salt_marsh/sandyloam_evt4
 
 Development of freshwater lens in an alluvial floodplain considering fresh surface water (on the left), saline groundwater (on the right) and evaporation (on the top)
 
+Reference for example 3:
+
 [![freshwaterlens](https://user-images.githubusercontent.com/7712599/88616201-dc8c9180-d0d6-11ea-8e63-00d0c57609db.gif "Smart metering")](https://www.youtube.com/watch?v=y01Bo0dyTFE)
 
 Packaged input file is downloadable from [here.](https://dspace.flinders.edu.au/xmlui/handle/2328/39313):
+
+America, Ilja, Zhang, Chenming, Werner, Adrian D. and Zee, Sjoerd E. A. T. M. (2020) Evaporation and salt accumulation effects on riparian freshwater lenses. Water Resources Research, . doi:10.1029/2019wr026380
 
 ## How to use the code:
 
