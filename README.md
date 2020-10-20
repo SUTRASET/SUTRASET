@@ -106,7 +106,7 @@ gfortran *.f90 *.f -O3 -o sutraset_gf_windows.exe
 
 ## Rule of Thumb to help converge your solution:
 
-1. If negative solute concentration is present, particularly below the cell where evaporation is implemented, try to reduce the diffusivity, or refine the mesh. As evaporation may lift the salinity up to solubility limit (~265 PPT for NaCl), generating large concentration gradient near the surface. This could be relieved by quickly diffuse the hypersaline water through diffusion, or add more cells to describe the details
+1. If negative solute concentration is present, particularly below the cell where evaporation is implemented, try to increase the diffusivity, or refine the mesh. As evaporation may lift the salinity up to solubility limit (~265 PPT for NaCl), generating large concentration gradient near the surface. This could be relieved by quickly diffuse the hypersaline water through diffusion, or add more cells to describe the details
 
 2. non-linear iteration must be enabled, when seepage is considered.
 
