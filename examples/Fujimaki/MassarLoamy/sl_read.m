@@ -6,7 +6,7 @@ name='Column';
 % read input files
 %inp=i0('desaline');
 fil =  readFIL;
-inp  = inpObj(fil.basename);
+inp  = inpObj(fil.basename,'block_reading','yes');
 nod  = readNOD(fil.basename);
 ele  = readELE( fil.basename);
 bcop = readBCOP(fil.basename);
