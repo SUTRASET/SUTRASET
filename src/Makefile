@@ -81,6 +81,11 @@ do_script:
 #target: prerequisites 
 
 
+windows: 
+	@echo SUBROUTINE GVERSION (K3) >$(GV) 
+	@echo       RETURN   >>$(GV)
+	@echo END SUBROUTINE >>$(GV)
+
 ## make all
 all: $(EXECUTABLE) 
 #all:
