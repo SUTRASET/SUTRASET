@@ -201,7 +201,8 @@ C     INCORPORATING FILM WATER FLOW INTO THE SYSTEM
           IF  (MFT.EQ.1) THEN
           CALL PERFILM (SPF,RPF,PORM,TPM,PRES,SW,MFT)
           RELK = RELK+SPF*RPF
-      ELSEIF (MFT.EQ.2) THEN
+          ENDIF
+      ELSEIF (MFT.EQ.4) THEN
           R E L K   =   DBLE (1)
       ENDIF
       
