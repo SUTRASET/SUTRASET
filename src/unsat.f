@@ -88,7 +88,7 @@ C     SET PARAMETERS FOR CURRENT REGION, KREG                            UNSAT..
       DLAM=REAL(DLAM4)   
       PSICB=REAL(PSICB4)   
       SWRES=REAL(SWRES4)
-      ENDIF          
+      ENDIF          ! KREG
 C  CHANGE THE PORE WATER PRESSURE (NEGATIVE) INTO CAPILLARY HEAD
 C  (POSITIVE) 
       PSIC=-REAL(PRES/9.8E3)
@@ -96,7 +96,7 @@ C  (POSITIVE)
       SWRMS1=1.E0-SI
 
 C  USING VAN GENUCHTEN WATER RETENTION CURVE WITH FAYER EXTENTION
-      IF (KREG.EQ.1.OR.KREG.EQ.2)THEN
+      IF (KREG.EQ.1.OR.KREG.EQ.2)THEN   !KREG
 C                                                                        UNSAT.........6700
 C                                                                        UNSAT.........6800
 C*********************************************************************** UNSAT.........6900
@@ -193,13 +193,16 @@ C  TO20181102 THROUGH DERIVATION, IF SWSTAR =SW STAR USES ACTUAL
 C  SATUATION AS EFFECTIVE 
 C   IF SWSTAR=1.D0/AAPVNN EFFECTIVE SATURATION IS EMPLOYMED
 C      SWSTAR =SW
-      R E L K   =   DBLE (SWSTAR**ECTO*                                
-     1                   (1.E0-(1.E0-SWSTAR**(1.E0/VNF))**(VNF))**2.E0)
 
 C     INCORPORATING FILM WATER FLOW INTO THE SYSTEM
-      IF (MFT.NE.0) THEN
+      IF (MFT.EQ.1.OR.MFT.EQ.0) THEN
+      R E L K   =   DBLE (SWSTAR**ECTO*                                
+     1                   (1.E0-(1.E0-SWSTAR**(1.E0/VNF))**(VNF))**2.E0)
+          IF  (MFT.EQ.1) THEN
           CALL PERFILM (SPF,RPF,PORM,TPM,PRES,SW,MFT)
           RELK = RELK+SPF*RPF
+      ELSEIF (MFT.EQ.2) THEN
+          R E L K   =   DBLE (1)
       ENDIF
       
 C         LET RELK EQUALS TO ZERO IS TO REDUCE A BUG IN *.ELE OUTPUT
