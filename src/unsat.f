@@ -96,7 +96,7 @@ C  (POSITIVE)
       SWRMS1=1.E0-SI
 
 C  USING VAN GENUCHTEN WATER RETENTION CURVE WITH FAYER EXTENTION
-      IF (KREG.EQ.1.OR.KREG.EQ.2)THEN   !KREG
+      IF (KREG.EQ.1.OR.KREG.EQ.2.OR.KREG.EQ.7.OR.KREG.EQ.8)THEN   !KREG
 C                                                                        UNSAT.........6700
 C                                                                        UNSAT.........6800
 C*********************************************************************** UNSAT.........6900
@@ -193,16 +193,16 @@ C  TO20181102 THROUGH DERIVATION, IF SWSTAR =SW STAR USES ACTUAL
 C  SATUATION AS EFFECTIVE 
 C   IF SWSTAR=1.D0/AAPVNN EFFECTIVE SATURATION IS EMPLOYMED
 C      SWSTAR =SW
-
+CKREG.EQ.1.OR.KREG.EQ.2.OR.KREG.EQ.7.OR.KREG.EQ.8
 C     INCORPORATING FILM WATER FLOW INTO THE SYSTEM
-      IF (MFT.EQ.1.OR.MFT.EQ.0) THEN
+      IF (KREG.EQ.1.OR.KREG.EQ.2) THEN
       R E L K   =   DBLE (SWSTAR**ECTO*                                
      1                   (1.E0-(1.E0-SWSTAR**(1.E0/VNF))**(VNF))**2.E0)
           IF  (MFT.EQ.1) THEN
           CALL PERFILM (SPF,RPF,PORM,TPM,PRES,SW,MFT)
           RELK = RELK+SPF*RPF
           ENDIF
-      ELSEIF (MFT.EQ.4) THEN
+      ELSEIF (KREG.EQ.7.OR.KREG.EQ.8) THEN   ! RELK is a constent to be 1 IF KREG IS 7 OR 8  CM210817
           R E L K   =   DBLE (1)
       ENDIF
       
