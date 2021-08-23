@@ -72,11 +72,11 @@ C*********************************************************************** UNSAT..
 C*********************************************************************** UNSAT.........5500
 C                                                                        UNSAT.........5600
 C     SET PARAMETERS FOR CURRENT REGION, KREG                            UNSAT.........5700
-      IF(KREG.EQ.1)THEN                                                   UNSAT.........5800
+      IF(KREG.EQ.1.OR.KREG.EQ.7)THEN                                                   UNSAT.........5800
       SWRES=REAL(SWRES1)                                                      UNSAT.........5900
       AA=REAL(AA1)                                                            UNSAT.........6000
       VN=REAL(VN1)                                                            UNSAT.........6100
-      ELSEIF(KREG.EQ.2)THEN                                                           
+      ELSEIF(KREG.EQ.2.OR.KREG.EQ.8)THEN                                                           
       SWRES=REAL(SWRES2)                                                      UNSAT.........6300
       AA=REAL(AA2)                                                            UNSAT.........6400
       VN=REAL(VN2)                                                            UNSAT.........6500
