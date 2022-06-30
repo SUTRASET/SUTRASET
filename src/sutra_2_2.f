@@ -2574,6 +2574,7 @@ C                                                                        BUDGET.
      2   IQSOU,UBC,IUBC,CS1,CS2,CS3,SL,SR,NREG,GNUP1,GNUU1,              BUDGET.........900
      3   IBCSOP,IBCSOU,
      4   CJGNUP,CJGNUU) ! Chengji 2015-03-31
+      USE M_ET
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                BUDGET........1100
       CHARACTER*10 ADSMOD                                                BUDGET........1200
       CHARACTER*13 ULABL(2)                                              BUDGET........1300
@@ -2630,8 +2631,13 @@ C.....CALCULATE COMPONENTS OF FLUID MASS BUDGET                          BUDGET.
       QINPOS = 0D0                                                       BUDGET........6300
       QINNEG = 0D0                                                       BUDGET........6400
       DO 100 I=1,NN                                                      BUDGET........6500
+      IF (PM1(I).LE.SCF) THEN
+      TERM = (1-ISSFLO/2)*RHO(I)*VOL(I)*          
+     1   (POR(I)*DSWDP(I))*(PVEC(I)-PM1(I))/DELTP  
+      ELSE
       TERM = (1-ISSFLO/2)*RHO(I)*VOL(I)*                                 BUDGET........6600
      1   (SW(I)*SOP(I)+POR(I)*DSWDP(I))*(PVEC(I)-PM1(I))/DELTP           BUDGET........6700
+      END IF
       STPPOS = STPPOS + MAX(0D0, TERM)                                   BUDGET........6800
       STPNEG = STPNEG + MIN(0D0, TERM)                                   BUDGET........6900
       TERM = (1-ISSFLO/2)*POR(I)*SW(I)*DRWDU*VOL(I)*                     BUDGET........7000
@@ -2762,9 +2768,15 @@ C.....SET ADSORPTION PARAMETERS                                          BUDGET.
       TERM = EPRSV*CS1(I)*DUDT                                           BUDGET.......19300
       SLDPOS = SLDPOS + MAX(0D0, TERM)                                   BUDGET.......19400
       SLDNEG = SLDNEG + MIN(0D0, TERM)                                   BUDGET.......19500
+      IF (PM1(I).LE.SCF) THEN
       TERM = CW*UVEC(I)*(1-ISSFLO/2)*VOL(I)*                             BUDGET.......19600
      1   (RHO(I)*(SW(I)*SOP(I)+POR(I)*DSWDP(I))*DPDTITR(I)               BUDGET.......19700
      2   +POR(I)*SW(I)*DRWDU*(UM1(I)-UM2(I))/DLTUM1)                     BUDGET.......19800
+      ELSE
+      TERM = CW*UVEC(I)*(1-ISSFLO/2)*VOL(I)*                             BUDGET.......19600
+     1   (RHO(I)*(SW(I)*SOP(I)+POR(I)*DSWDP(I))*DPDTITR(I)               BUDGET.......19700
+     2   +POR(I)*SW(I)*DRWDU*(UM1(I)-UM2(I))/DLTUM1)                     BUDGET.......19800
+      END IF
       DNSPOS = DNSPOS + MAX(0D0, TERM)                                   BUDGET.......19900
       DNSNEG = DNSNEG + MIN(0D0, TERM)                                   BUDGET.......20000
       TERM = ESRV*PRODF1*UVEC(I)                                         BUDGET.......20100
@@ -7397,6 +7409,7 @@ C                                                                        NODAL..
       SUBROUTINE NODAL(ML,VOL,PMAT,PVEC,UMAT,UVEC,PITER,UITER,PM1,UM1,   NODAL.........1000
      1   UM2,POR,QIN,UIN,QUIN,QINITR,CS1,CS2,CS3,SL,SR,SW,DSWDP,RHO,SOP, NODAL.........1100
      1   NREG,JA)                                                        NODAL.........1200
+      USE M_ET
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)                                NODAL.........1300
       DIMENSION VOL(NN),PMAT(NELT,NCBI),PVEC(NNVEC),UMAT(NELT,NCBI),     NODAL.........1400
      1   UVEC(NNVEC)                                                     NODAL.........1500
@@ -7460,8 +7473,16 @@ C                                                                        NODAL..
 C                                                                        NODAL.........7300
 C.....CALCULATE CELLWISE TERMS FOR P EQUATION.                           NODAL.........7400
 C.....FOR STEADY-STATE FLOW, ISSFLO=2; FOR TRANSIENT FLOW, ISSFLO=0.     NODAL.........7500
-  220 AFLN=(1-ISSFLO/2)*                                                 NODAL.........7600
-     1   (SWRHON*SOP(I)+POR(I)*RHO(I)*DSWDP(I))*VOL(I)/DELTP             NODAL.........7700
+C  220 AFLN=(1-ISSFLO/2)*                                                 NODAL.........7600
+C     1   (SWRHON*SOP(I)+POR(I)*RHO(I)*DSWDP(I))*VOL(I)/DELTP             NODAL.........7700
+  220 CONTINUE
+      IF (PM1(I).LE.SCF) THEN
+      AFLN=(1-ISSFLO/2)*                          
+     1   POR(I)*RHO(I)*DSWDP(I)*VOL(I)/DELTP
+      ELSE
+      AFLN=(1-ISSFLO/2)*                         
+     1   (SWRHON*SOP(I)+POR(I)*RHO(I)*DSWDP(I))*VOL(I)/DELTP
+      END IF
       CFLN=POR(I)*SW(I)*DRWDU*VOL(I)                                     NODAL.........7800
       DUDT=(1-ISSFLO/2)*(UM1(I)-UM2(I))/DLTUM1                           NODAL.........7900
       CFLN=CFLN*DUDT                                                     NODAL.........8000
